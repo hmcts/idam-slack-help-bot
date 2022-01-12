@@ -264,32 +264,13 @@ function openHelpRequestBlocks() {
     return {
         "title": {
             "type": "plain_text",
-            "text": "Support request"
+            "text": "IDAM Support Request"
         },
         "submit": {
             "type": "plain_text",
             "text": "Submit"
         },
         "blocks": [
-            {
-                "type": "input",
-                "block_id": "request_type",
-                "element": {
-                    "type": "radio_buttons",
-                    "options": [
-                        option('CCD Support', 'ccd'),
-                        option('CFTS Level 2 Support', 'cfts'),
-                    ],
-                    "action_id": "request_type"
-                },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Request type"
-                }
-            },
-            {
-                "type": "divider"
-            },
             {
                 "type": "input",
                 "block_id": "summary",

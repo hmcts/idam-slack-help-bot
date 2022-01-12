@@ -3,17 +3,12 @@ const config = require('config')
 const {createComment, mapFieldsToDescription} = require("./jiraMessages");
 
 const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
-
-const { 
-    extractProjectRegex,
-    getRequestTypeFromJiraId,
-    getJiraProjects,
-    getIssueTypeNames,
-    getIssueTypeId,
-    getJiraProject,
-    getJiraStartTransitionId,
-    getJiraDoneTransitionId
-} = require('../supportConfig');
+const issueTypeId = config.get('jira.issue_type_id')
+const issueTypeName = config.get('jira.issue_type_name')
+const jiraProject = config.get('jira.project')
+const jiraStartTransitionId = config.get('jira.start_transition_id')
+const jiraDoneTransitionId = config.get('jira.done_transition_id')
+const extractProjectRegex = new RegExp(`(${jiraProject}-[\\d]+)`)
 
 const jira = new JiraApi({
     protocol: 'https',
@@ -25,10 +20,9 @@ const jira = new JiraApi({
 
 async function resolveHelpRequest(jiraId) {
     try {
-        const requestType = getRequestTypeFromJiraId(jiraId)
         await jira.transitionIssue(jiraId, {
             transition: {
-                id: getJiraDoneTransitionId(requestType)
+                id: jiraDoneTransitionId
             }
         })
     } catch (err) {
@@ -38,10 +32,9 @@ async function resolveHelpRequest(jiraId) {
 
 async function startHelpRequest(jiraId) {
     try {
-        const requestType = getRequestTypeFromJiraId(jiraId)
         await jira.transitionIssue(jiraId, {
             transition: {
-                id: getJiraStartTransitionId(requestType)
+                id: jiraStartTransitionId
             }
         })
     } catch (err) {
@@ -49,10 +42,9 @@ async function startHelpRequest(jiraId) {
     }
 }
 
+
 async function searchForUnassignedOpenIssues() {
-    const projects = getJiraProjects().join(', ')
-    const issueTypes = getIssueTypeNames().map(name => `"${name}"`).join(', ')
-    const jqlQuery = `project in (${projects}) AND type in (${issueTypes}) AND status in ("Draft", "To Do") and assignee is EMPTY ORDER BY created ASC`;
+    const jqlQuery = `project = ${jiraProject} AND type = "${issueTypeName}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
     try {
         return await jira.searchJira(
             jqlQuery,
@@ -104,12 +96,12 @@ function convertEmail(email) {
     return email.split('@')[0]
 }
 
-async function createHelpRequestInJira(requestType, summary, project, user, labels) {
+async function createHelpRequestInJira(summary, project, user, labels) {
     return await jira.addNewIssue({
         fields: {
             summary: summary,
             issuetype: {
-                id: getIssueTypeId(requestType)
+                id: issueTypeId
             },
             project: {
                 id: project.id
@@ -120,7 +112,7 @@ async function createHelpRequestInJira(requestType, summary, project, user, labe
                 name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
             },
             customfield_24700: [ { value: "No Environment" } ], // Environment - TODO Make this configurable and select appropriate value based on selection
-            fixVersions: [ { name: "CCD No Release Required" } ], // TODO Make this configurable
+            fixVersions: [ { name: "No Release Required" } ], // TODO Make this configurable
             components: [ { name: "No Component" } ],
             customfield_10004: 0 // Story points - TODO Make this configurable
         }
@@ -128,23 +120,21 @@ async function createHelpRequestInJira(requestType, summary, project, user, labe
 }
 
 async function createHelpRequest({
-                                     requestType,
                                      summary,
                                      userEmail,
                                      labels
                                  }) {
     const user = convertEmail(userEmail)
-
-    const project = await jira.getProject(getJiraProject(requestType))
+    const project = await jira.getProject(jiraProject)
 
     // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-post
     // note: fields don't match 100%, our Jira version is a bit old (still a supported LTS though)
     let result
     try {
-        result = await createHelpRequestInJira(requestType, summary, project, user, labels);
+        result = await createHelpRequestInJira(summary, project, user, labels);
     } catch (err) {
         // in case the user doesn't exist in Jira use the system user
-        result = await createHelpRequestInJira(requestType, summary, project, systemUser, labels);
+        result = await createHelpRequestInJira(summary, project, systemUser, labels);
     }
 
     return result.key

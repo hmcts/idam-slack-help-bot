@@ -1,9 +1,5 @@
 const config = require('@hmcts/properties-volume').addTo(require('config'))
 
-const { 
-    getReportChannel, 
-    isReportChannel
-} = require('./src/supportConfig');
 const {
     appHomeUnassignedIssues,
     extractSlackLinkFromText,
@@ -27,21 +23,23 @@ const {
 } = require("./src/service/persistence");
 
 const app = new App({
-    token: config.get('secrets.cftptl-intsvc.ccd-slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
+    token: config.get('secrets.cftptl-intsvc.slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
     // logLevel: LogLevel.DEBUG,
-    appToken: config.get('secrets.cftptl-intsvc.ccd-slack-app-token'),
+    appToken: config.get('secrets.cftptl-intsvc.slack-app-token'),
     socketMode: true,
 });
 
 const http = require('http');
 
+const reportChannel = config.get('slack.report_channel');
+const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
 
 const server = http.createServer((req, res) => {
     if (req.method !== 'GET') {
         res.end(`{"error": "${http.STATUS_CODES[405]}"}`)
     } else if (req.url === '/health') {
-        res.end(`<h1>ccd-slack-help-bot</h1>`)
+        res.end(`<h1>idam-slack-help-bot</h1>`)
     } else if (req.url === '/health/liveness') {
         if (app.receiver.client.badConnection) {
             res.statusCode = 500
@@ -51,7 +49,7 @@ const server = http.createServer((req, res) => {
 
         res.end('OK');
     } else if (req.url === '/health/readiness') {
-        res.end(`<h1>ccd-slack-help-bot</h1>`)
+        res.end(`<h1>idam-slack-help-bot</h1>`)
     } else {
         res.end(`{"error": "${http.STATUS_CODES[404]}"}`)
     }
@@ -146,17 +144,12 @@ app.view('create_help_request', async ({ack, body, view, client}) => {
             analysis: view.state.values.analysis.analysis.value,
         }
 
-        const requestType = view.state.values.request_type.request_type.selected_option.value
-
         const jiraId = await createHelpRequest({
-            requestType,
             summary: helpRequest.summary,
             userEmail,
             labels: extractLabels(view.state.values)
         })
 
-        const reportChannel = getReportChannel(requestType)
-        console.log(`Publishing request ${jiraId} to channel ${reportChannel}`)
         const result = await client.chat.postMessage({
             channel: reportChannel,
             text: 'New support request raised',
@@ -405,7 +398,7 @@ app.event('message', async ({event, context, client, say}) => {
     try {
         // filter unwanted channels in case someone invites the bot to it
         // and only look at threaded messages
-        if (isReportChannel(event.channel) && event.thread_ts) {
+        if (event.channel === reportChannelId && event.thread_ts) {
             const slackLink = (await client.chat.getPermalink({
                 channel: event.channel,
                 'message_ts': event.thread_ts

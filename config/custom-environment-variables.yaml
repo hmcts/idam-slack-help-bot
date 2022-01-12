@@ -1,0 +1,28 @@
+slack:
+  ccd:
+    report_channel: CCD_SLACK_REPORT_CHANNEL
+    report_channel_id: CCD_SLACK_REPORT_CHANNEL_ID
+  cfts:
+    report_channel: CFTS_SLACK_REPORT_CHANNEL
+    report_channel_id: CFTS_SLACK_REPORT_CHANNEL_ID
+
+jira:
+  ccd:
+    start_transition_id: CCD_JIRA_START_TRANSITION_ID
+    done_transition_id: CCD_JIRA_DONE_TRANSITION_ID
+    project: CCD_JIRA_PROJECT
+    issue_type_id: CCD_JIRA_ISSUE_TYPE_ID
+    issue_type_name: CCD_JIRA_ISSUE_TYPE_NAME
+  cfts:
+    start_transition_id: CFTS_JIRA_START_TRANSITION_ID
+    done_transition_id: CFTS_JIRA_DONE_TRANSITION_ID
+    project: CFTS_JIRA_PROJECT
+    issue_type_id: CFTS_JIRA_ISSUE_TYPE_ID
+    issue_type_name: CFTS_JIRA_ISSUE_TYPE_NAME
+
+secrets:
+  cftptl-intsvc:
+    jira-username: JIRA_USERNAME
+    jira-api-token: JIRA_API_TOKEN
+    ccd-slack-bot-token: SLACK_BOT_TOKEN
+    ccd-slack-app-token: SLACK_APP_TOKEN

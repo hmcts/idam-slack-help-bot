@@ -110,11 +110,7 @@ async function createHelpRequestInJira(summary, project, user, labels) {
             description: undefined,
             reporter: {
                 name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
-            },
-            customfield_24700: [ { value: "No Environment" } ], // Environment - TODO Make this configurable and select appropriate value based on selection
-            fixVersions: [ { name: "No Release Required" } ], // TODO Make this configurable
-            components: [ { name: "No Component" } ],
-            customfield_10004: 0 // Story points - TODO Make this configurable
+            }
         }
     });
 }

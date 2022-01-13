@@ -11,8 +11,14 @@ jira:
   start_transition_id: 21
   done_transition_id: 41
   project: SBOX
-  issue_type_id: 10900
-  issue_type_name: Bug
+  issue_type_id: 3
+  issue_type_name: Task
+  bug_type_id: 10900
+  bug_type_name: Bug
+  service_type_id: 17701
+  service_type_name: Open ID Connect Service
+  role_type_id: 17702
+  role_type_name: User Role
 
 secrets:
   cftptl-intsvc:

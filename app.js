@@ -117,9 +117,8 @@ app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) =
 });
 
 function extractLabels(values) {
-    const priority = `priority-${values.priority.priority.selected_option.value}`
-    const team = `team-${values.team.team.selected_option.value}`
-    return [priority, team];
+    const service = `team-${values.service.service.selected_option.value}`
+    return [service];
 }
 
 app.view('create_help_request', async ({ack, body, view, client}) => {
@@ -137,11 +136,13 @@ app.view('create_help_request', async ({ack, body, view, client}) => {
         const helpRequest = {
             user,
             summary: view.state.values.summary.title.value,
-            priority: view.state.values.priority.priority.selected_option.text.text,
-            references: view.state.values.references?.title?.value || "None",
-            environment: view.state.values.environment.environment.selected_option?.text.text || "None",
             description: view.state.values.description.description.value,
             analysis: view.state.values.analysis.analysis.value,
+            environment: view.state.values.environment.environment.selected_option?.text.text || "N/A",
+            service: view.state.values.service.service.selected_option?.text.text || "N/A",
+            userAffected: view.state.values.user.user.value || "N/A",
+            date: view.state.values.date.date.value || "N/A",
+            time: view.state.values.time.time.value || "N/A",
         }
 
         const jiraId = await createHelpRequest({

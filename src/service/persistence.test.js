@@ -1,7 +1,7 @@
 const jira = require('./persistence')
 const config = require('config')
 
-const systemUser = config.get('jira.username')
+const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
 
 describe('convertEmail', () => {
     it('strips email', () => {

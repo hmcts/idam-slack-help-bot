@@ -21,9 +21,9 @@ function extractSlackLinkFromText(text) {
 function helpRequestRaised({
                                user,
                                summary,
-                               priority,
                                environment,
-                               references,
+                               service,
+                               userAffected,
                                jiraId
                            }) {
     return [
@@ -46,24 +46,19 @@ function helpRequestRaised({
                 },
                 {
                     "type": "mrkdwn",
-                    "text": `*Priority* :rotating_light: \n ${priority}`
-                },
-                {
-                    "type": "mrkdwn",
                     "text": `*Reporter* :man-surfing: \n <@${user}>`
                 },
                 {
                     "type": "mrkdwn",
                     "text": `*Environment* :house_with_garden: \n ${environment}`
-                }
-            ]
-        },
-        {
-            "type": "section",
-            "fields": [
+                },
                 {
                     "type": "mrkdwn",
-                    "text": `*Jira/ServiceNow references* :pencil: \n${references}`
+                    "text": `*Service affected* :service_dog: \n ${service}`
+                },
+                {
+                    "type": "mrkdwn",
+                    "text": `*User affected* :person_with_probing_cane: \n ${userAffected}`
                 }
             ]
         },
@@ -125,23 +120,39 @@ function helpRequestRaised({
 function helpRequestDetails(
     {
         description,
-        analysis
+        analysis,
+        date,
+        time
     }) {
     return [
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": `:spiral_note_pad: Description: ${description}`,
+                "text": `*Description* :spiral_note_pad: \n ${description}`
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": `:thinking_face: Analysis: ${analysis}`,
+                "text": `*Analysis* :thinking_face: \n ${analysis}`
             }
         },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": `*Date issue occurred* :date: \n ${date}`
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": `*Time issue occurred* :hourglass: \n ${time}`
+            }
+        }
     ]
 }
 
@@ -289,43 +300,34 @@ function openHelpRequestBlocks() {
             },
             {
                 "type": "input",
-                "block_id": "priority",
+                "block_id": "description",
                 "element": {
-                    "type": "static_select",
+                    "type": "plain_text_input",
+                    "multiline": true,
+                    "action_id": "description",
                     "placeholder": {
                         "type": "plain_text",
-                        "text": "Standard priority classification",
-                        "emoji": true
-                    },
-                    "options": [
-                        option('Highest'),
-                        option('High'),
-                        option('Medium'),
-                        option('Low'),
-                    ],
-                    "action_id": "priority"
+                        "text": "Give more detail"
+                    }
                 },
                 "label": {
                     "type": "plain_text",
-                    "text": "Priority",
+                    "text": "Issue description",
                     "emoji": true
                 }
             },
             {
                 "type": "input",
-                "block_id": "references",
-                "optional": true,
+                "block_id": "analysis",
                 "element": {
                     "type": "plain_text_input",
-                    "action_id": "title",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "Any relevant ticket references"
-                    }
+                    "multiline": true,
+                    "action_id": "analysis"
                 },
                 "label": {
                     "type": "plain_text",
-                    "text": "Jira/ServiceNow references"
+                    "text": "Analysis done so far",
+                    "emoji": true
                 }
             },
             {
@@ -357,40 +359,12 @@ function openHelpRequestBlocks() {
             },
             {
                 "type": "input",
-                "block_id": "description",
-                "element": {
-                    "type": "plain_text_input",
-                    "multiline": true,
-                    "action_id": "description"
-                },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Issue description",
-                    "emoji": true
-                }
-            },
-            {
-                "type": "input",
-                "block_id": "analysis",
-                "element": {
-                    "type": "plain_text_input",
-                    "multiline": true,
-                    "action_id": "analysis"
-                },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Analysis done so far",
-                    "emoji": true
-                }
-            },
-            {
-                "type": "input",
-                "block_id": "team",
+                "block_id": "service",
                 "element": {
                     "type": "static_select",
                     "placeholder": {
                         "type": "plain_text",
-                        "text": "Select other if missing",
+                        "text": "Choose a service. Select other if missing",
                         "emoji": true
                     },
                     "options": [
@@ -408,6 +382,7 @@ function openHelpRequestBlocks() {
                         option('Ethos'),
                         option('Evidence Management', 'evidence'),
                         option('Expert UI', 'xui'),
+                        option('FaCT'),
                         option('Financial Remedy', 'finrem'),
                         option('FPLA'),
                         option('Family Private Law', 'FPRL'),
@@ -427,11 +402,53 @@ function openHelpRequestBlocks() {
                         option('PET'),
                         option('Work Allocation', 'workallocation'),
                     ],
-                    "action_id": "team"
+                    "action_id": "service"
                 },
                 "label": {
                     "type": "plain_text",
-                    "text": "Which team are you from?",
+                    "text": "Service affected",
+                    "emoji": true
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "user",
+                "optional": true,
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "user"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "User affected",
+                    "emoji": true
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "date",
+                "optional": true,
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "date"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Date the issue occurred",
+                    "emoji": true
+                }
+            },
+            {
+                "type": "input",
+                "block_id": "time",
+                "optional": true,
+                "element": {
+                    "type": "plain_text_input",
+                    "action_id": "time"
+                },
+                "label": {
+                    "type": "plain_text",
+                    "text": "Time the issue occurred",
                     "emoji": true
                 }
             }

@@ -8,6 +8,12 @@ jira:
   project: JIRA_PROJECT
   issue_type_id: JIRA_ISSUE_TYPE_ID
   issue_type_name: JIRA_ISSUE_TYPE_NAME
+  bug_type_id: JIRA_BUG_TYPE_ID
+  bug_type_name: JIRA_BUG_TYPE_NAME
+  service_type_id: JIRA_SERVICE_TYPE_ID
+  service_type_name: JIRA_SERVICE_TYPE_NAME
+  role_type_id: JIRA_ROLE_TYPE_ID
+  role_type_name: JIRA_ROLE_TYPE_NAME
 
 secrets:
   cftptl-intsvc:

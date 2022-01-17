@@ -7,8 +7,11 @@ function optionalField(prefix, value) {
 
 function mapFieldsToDescription(
     {
-        references,
         environment,
+        service,
+        userAffected,
+        date,
+        time,
         description,
         analysis,
         slackLink
@@ -16,16 +19,23 @@ function mapFieldsToDescription(
     return `
 h6. _This is an automatically generated ticket created from Slack, do not reply or update in here, [view in Slack|${slackLink}]_
 
-${optionalField('Jira/ServiceNow references', references)}
-
-
 ${optionalField('Environment', environment)}
+
+${optionalField('Service affected', service)}
+
+${optionalField('User Affected', userAffected)}
+
+${optionalField('Date issue occurred', date)}
+
+${optionalField('Time issue Occurred', time)}
 
 *Issue description*
 
 ${description}
 
-*Analysis done so far*: ${analysis}
+*Analysis done so far*
+
+${analysis}
 `
 }
 

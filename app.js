@@ -22,6 +22,8 @@ const {
     updateHelpRequestDescription
 } = require("./src/service/persistence");
 
+const { ticketTypePickerModal, openIDRequestModal, userRequestModal, bugReportModal, supportRequestModal } = require('./src/modals');
+
 const app = new App({
     token: config.get('secrets.cftptl-intsvc.slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
     // logLevel: LogLevel.DEBUG,
@@ -30,7 +32,6 @@ const app = new App({
 });
 
 const http = require('http');
-
 const reportChannel = config.get('slack.report_channel');
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
@@ -109,7 +110,7 @@ app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) =
 
         await client.views.open({
             trigger_id: shortcut.trigger_id,
-            view: openHelpRequestBlocks()
+            view: ticketTypePickerModal()
         });
     } catch (error) {
         console.error(error);
@@ -120,6 +121,38 @@ function extractLabels(values) {
     const service = `team-${values.service.service.selected_option.value}`
     return [service];
 }
+
+app.action('show_type_form', async ({ack, body, client, logger}) => {
+    await ack();
+
+    try {
+        let view;
+        switch (body.view.state.values.stage_one.type_selector.selected_option.value) {
+            case 'openid':
+                view = openIDRequestModal;
+                break;
+            case 'user':
+                view = userRequestModal;
+                break;
+            case 'bug':
+                view = bugReportModal;
+                break;
+            case 'support':
+                view = supportRequestModal;
+                break;
+        }
+
+        const result = await client.views.update({
+            view_id: body.view.id,
+            hash: body.view.hash,
+            view: view()
+        });
+        logger.info(result);
+    }
+    catch (error) {
+        logger.error(error);
+    }
+})
 
 app.view('create_help_request', async ({ack, body, view, client}) => {
     // Acknowledge the view_submission event
@@ -203,9 +236,7 @@ app.event('app_mention', async ({event, context, client, say}) => {
     }
 });
 
-app.action('assign_help_request_to_me', async ({
-                                                   body, action, ack, client, context
-                                               }) => {
+app.action('assign_help_request_to_me', async ({body, action, ack, client, context}) => {
     try {
         await ack();
 
@@ -271,9 +302,7 @@ app.action('resolve_help_request', async ({
 });
 
 
-app.action('start_help_request', async ({
-                                            body, action, ack, client, context
-                                        }) => {
+app.action('start_help_request', async ({body, action, ack, client, context}) => {
     try {
         await ack();
         const jiraId = extractJiraIdFromBlocks(body.message.blocks)
@@ -307,9 +336,7 @@ app.action('start_help_request', async ({
     }
 });
 
-app.action('app_home_unassigned_user_select', async ({
-                                                         body, action, ack, client, context
-                                                     }) => {
+app.action('app_home_unassigned_user_select', async ({body, action, ack, client, context}) => {
     try {
         await ack();
 
@@ -327,9 +354,7 @@ app.action('app_home_unassigned_user_select', async ({
     }
 })
 
-app.action('app_home_take_unassigned_issue', async ({
-                                                         body, action, ack, client, context
-                                                     }) => {
+app.action('app_home_take_unassigned_issue', async ({body, action, ack, client, context}) => {
     try {
         await ack();
 
@@ -348,9 +373,7 @@ app.action('app_home_take_unassigned_issue', async ({
     }
 })
 
-app.action('assign_help_request_to_user', async ({
-                                                     body, action, ack, client, context
-                                                 }) => {
+app.action('assign_help_request_to_user', async ({body, action, ack, client, context}) => {
     try {
         await ack();
 

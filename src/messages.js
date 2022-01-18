@@ -1,3 +1,5 @@
+const { option } = require('./helpers');
+
 const { convertIso8601ToEpochSeconds } = require('./dateHelper');
 
 function convertJiraKeyToUrl(jiraId) {
@@ -258,17 +260,6 @@ function appHomeUnassignedIssues(openIssueBlocks) {
         },
         ...openIssueBlocks
     ]
-}
-
-function option(name, option) {
-    return {
-        text: {
-            type: "plain_text",
-            text: name,
-            emoji: true
-        },
-        value: option ?? name.toLowerCase()
-    }
 }
 
 function openHelpRequestBlocks() {

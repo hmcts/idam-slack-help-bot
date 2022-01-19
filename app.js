@@ -217,9 +217,8 @@ app.action('assign_help_request_to_me', async ({
         await assignHelpRequest(jiraId, userEmail)
 
         const blocks = body.message.blocks
-        getActionsElement(blocks, 'assign_help_request_to_user').initial_user = body.user.id
-        // work around issue where 'initial_user' doesn't update if someone selected a user in dropdown
-        // assignedToSection.block_id = `new_block_id_${randomString().substring(0, 8)}`;
+        blocks[5].elements[0].action_id = 'assign_help_request_to_user' + Math.floor(Math.random() * 1000);
+        blocks[5].elements[0].initial_user = body.user.id;
 
         await client.chat.update({
             channel: body.channel.id,
@@ -345,7 +344,7 @@ app.action('app_home_take_unassigned_issue', async ({
     }
 })
 
-app.action('assign_help_request_to_user', async ({
+app.action(/^assign_help_request_to_user/, async ({
                                                      body, action, ack, client, context
                                                  }) => {
     try {

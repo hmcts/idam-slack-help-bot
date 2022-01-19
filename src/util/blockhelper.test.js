@@ -62,25 +62,25 @@ describe('blockHelper', () => {
     }
 
     it('Should get action element', () => {
-        const element = getActionsElement(blocks, ['action_2', 'action_3'])
+        const element = getActionsElement(blocks, /action_2|action_3/)
         expect(element.value).toBe('action_2')
     })
 
     it('Should not get action element if element does not exist', () => {
-        const element = getActionsElement(blocks, ['action_3', 'action_4'])
+        const element = getActionsElement(blocks, /action_3|action_4/)
         expect(element).toBeNull()
     })
 
     it('Should update action element', () => {
-        updateActionsElement(blocks, ['action_2', 'action_3'], updatedElement)
+        updateActionsElement(blocks, /action_2|action_3/, updatedElement)
         expect(blocks[3].elements[1].value).toBe(updatedElement.value)
 
-        updateActionsElement(blocks, ['action_2', 'action_3'], originalElement)
+        updateActionsElement(blocks, /action_2|action_3/, originalElement)
         expect(blocks[3].elements[1].value).toBe(originalElement.value)
     })
 
     it('Should not update action element if element does not exist', () => {
-        updateActionsElement(blocks, ['action_3', 'action_4'], updatedElement)
+        updateActionsElement(blocks, /action_10/, updatedElement)
         expect(blocks[3].elements[1].value).toBe(originalElement.value)
     })
 

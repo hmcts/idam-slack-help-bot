@@ -1,10 +1,10 @@
-function getActionsElement(blocks, actionId) {
+function getActionsElement(blocks, actionIdRegex) {
     for (let i = 0; i < blocks.length; i++) {
         if (blocks[i].type === 'actions') {
             const elements = blocks[i].elements
             for (let j = 0; j < elements.length; j++) {
                 const element = elements[j]
-                if (actionId.indexOf(element.action_id) > -1) {
+                if (element.action_id.match(actionIdRegex)) {
                     return element
                 }
             }
@@ -13,12 +13,12 @@ function getActionsElement(blocks, actionId) {
     return null;
 }
 
-function updateActionsElement(blocks, actionId, value) {
+function updateActionsElement(blocks, actionIdRegex, value) {
     for (let i = 0; i < blocks.length; i++) {
         if (blocks[i].type === 'actions') {
             const elements = blocks[i].elements
             for (let j = 0; j < elements.length; j++) {
-                if (actionId.indexOf(elements[j].action_id) > -1) {
+                if (elements[j].action_id.match(actionIdRegex)) {
                     blocks[i].elements[j] = value
                 }
             }

@@ -217,8 +217,9 @@ app.action('assign_help_request_to_me', async ({
         await assignHelpRequest(jiraId, userEmail)
 
         const blocks = body.message.blocks
-        blocks[5].elements[0].action_id = 'assign_help_request_to_user' + Math.floor(Math.random() * 1000);
-        blocks[5].elements[0].initial_user = body.user.id;
+        let element = getActionsElement(blocks, /assign_help_request_to_user/);
+        element.action_id = 'assign_help_request_to_user' + Math.floor(Math.random() * 1000);
+        element.initial_user = body.user.id;
 
         await client.chat.update({
             channel: body.channel.id,
@@ -253,7 +254,7 @@ app.action('resolve_help_request', async ({
             "value": "start_help_request",
             "action_id": "start_help_request"
         }
-        updateActionsElement(blocks, ['start_help_request', 'resolve_help_request'], value)
+        updateActionsElement(blocks, /start_help_request|resolve_help_request/, value)
         getSectionField(blocks, 'Status').text = "Status :snowflake:\n Done"
 
         await client.chat.update({
@@ -289,7 +290,7 @@ app.action('start_help_request', async ({
             "value": "resolve_help_request",
             "action_id": "resolve_help_request"
         }
-        updateActionsElement(blocks, ['start_help_request', 'resolve_help_request'], value)
+        updateActionsElement(blocks, /start_help_request|resolve_help_request/, value)
         getSectionField(blocks, 'Status').text = "Status :fire_extinguisher:\n In progress"
 
         await client.chat.update({

@@ -1,4 +1,4 @@
-const { convertIso8601ToEpochSeconds } = require('./dateHelper');
+const { convertIso8601ToEpochSeconds } = require('./util/dateHelper');
 
 function convertJiraKeyToUrl(jiraId) {
     return `https://tools.hmcts.net/jira/browse/${jiraId}`;

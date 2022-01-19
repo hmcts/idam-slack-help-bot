@@ -1,5 +1,6 @@
 const JiraApi = require('jira-client');
 const config = require('config')
+const {getContextElement} = require("../util/blockHelper");
 const {createComment, mapFieldsToDescription} = require("./jiraMessages");
 
 const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
@@ -85,8 +86,7 @@ async function assignHelpRequest(issueId, email) {
  * @param blocks
  */
 function extractJiraIdFromBlocks(blocks) {
-    const viewOnJiraText = blocks[4].elements[0].text // TODO make this less fragile
-
+    const viewOnJiraText = getContextElement(blocks, 'View on Jira').text
     return extractJiraId(viewOnJiraText)
 }
 

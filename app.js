@@ -9,7 +9,6 @@ const {
     unassignedOpenIssue,
 } = require('./src/messages');
 const {App, LogLevel, SocketModeReceiver} = require('@slack/bolt');
-const crypto = require('crypto')
 const {
     addCommentToHelpRequest,
     assignHelpRequest,
@@ -30,6 +29,7 @@ const app = new App({
 });
 
 const http = require('http');
+const {getActionsElement, updateActionsElement, getSectionField} = require("./src/util/blockHelper");
 
 const reportChannel = config.get('slack.report_channel');
 const reportChannelId = config.get('slack.report_channel_id');
@@ -217,8 +217,7 @@ app.action('assign_help_request_to_me', async ({
         await assignHelpRequest(jiraId, userEmail)
 
         const blocks = body.message.blocks
-        const assignedToSection = blocks[6]
-        assignedToSection.elements[0].initial_user = body.user.id
+        getActionsElement(blocks, 'assign_help_request_to_user').initial_user = body.user.id
         // work around issue where 'initial_user' doesn't update if someone selected a user in dropdown
         // assignedToSection.block_id = `new_block_id_${randomString().substring(0, 8)}`;
 
@@ -244,8 +243,7 @@ app.action('resolve_help_request', async ({
         await resolveHelpRequest(jiraId) // TODO add optional resolution comment
 
         const blocks = body.message.blocks
-        // TODO less fragile block updating
-        blocks[6].elements[2] = {
+        const value = {
             "type": "button",
             "text": {
                 "type": "plain_text",
@@ -256,8 +254,8 @@ app.action('resolve_help_request', async ({
             "value": "start_help_request",
             "action_id": "start_help_request"
         }
-
-        blocks[2].fields[0].text = "Status :snowflake:\n Done"
+        updateActionsElement(blocks, ['start_help_request', 'resolve_help_request'], value)
+        getSectionField(blocks, 'Status').text = "Status :snowflake:\n Done"
 
         await client.chat.update({
             channel: body.channel.id,
@@ -281,8 +279,7 @@ app.action('start_help_request', async ({
         await startHelpRequest(jiraId) // TODO add optional resolution comment
 
         const blocks = body.message.blocks
-        // TODO less fragile block updating
-        blocks[6].elements[2] = {
+        const value = {
             "type": "button",
             "text": {
                 "type": "plain_text",
@@ -293,8 +290,8 @@ app.action('start_help_request', async ({
             "value": "resolve_help_request",
             "action_id": "resolve_help_request"
         }
-
-        blocks[2].fields[0].text = "Status :fire_extinguisher:\n In progress"
+        updateActionsElement(blocks, ['start_help_request', 'resolve_help_request'], value)
+        getSectionField(blocks, 'Status').text = "Status :fire_extinguisher:\n In progress"
 
         await client.chat.update({
             channel: body.channel.id,

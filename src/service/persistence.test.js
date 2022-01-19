@@ -21,11 +21,17 @@ describe('convertEmail', () => {
 describe('extractJiraId', () => {
     it('extracts the key', () => {
         const actual = jira.extractJiraIdFromBlocks([
-            {},
-            {},
-            {},
-            {},
             {
+                type: 'section'
+            },
+            {
+                type: 'divider'
+            },
+            {
+                type: 'section'
+            },
+            {
+                type: 'context',
                 elements: [
                     {
                         text: 'View on Jira: <https://tools.hmcts.net/jira/browse/SBOX-61|SBOX-61>'

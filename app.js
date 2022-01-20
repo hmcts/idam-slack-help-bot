@@ -3,8 +3,6 @@ const config = require('@hmcts/properties-volume').addTo(require('config'))
 const {
     appHomeUnassignedIssues,
     extractSlackLinkFromText,
-    helpRequestDetails,
-    helpRequestRaised,
     openHelpRequestBlocks,
     unassignedOpenIssue,
 } = require('./src/messages');
@@ -12,7 +10,6 @@ const {App, LogLevel, SocketModeReceiver} = require('@slack/bolt');
 const {
     addCommentToHelpRequest,
     assignHelpRequest,
-    createHelpRequest,
     extractJiraId,
     extractJiraIdFromBlocks,
     resolveHelpRequest,
@@ -29,6 +26,8 @@ const app = new App({
 });
 
 const http = require('http');
+const {handleSupportRequest} = require("./src/service/helpRequestManager");
+const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, getSectionField} = require("./src/util/blockHelper");
 
 const reportChannel = config.get('slack.report_channel');
@@ -63,6 +62,8 @@ server.listen(port, () => {
     await app.start();
     console.log('⚡️ Bolt app started');
 })();
+
+app.step(createSupportRequestStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()
@@ -116,11 +117,6 @@ app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) =
     }
 });
 
-function extractLabels(values) {
-    const service = `team-${values.service.service.selected_option.value}`
-    return [service];
-}
-
 app.view('create_help_request', async ({ack, body, view, client}) => {
     // Acknowledge the view_submission event
     await ack();
@@ -129,57 +125,21 @@ app.view('create_help_request', async ({ack, body, view, client}) => {
 
     // Message the user
     try {
-        const userEmail = (await client.users.profile.get({
-            user
-        })).profile.email
-
         const helpRequest = {
             user,
             summary: view.state.values.summary.title.value,
             description: view.state.values.description.description.value,
             analysis: view.state.values.analysis.analysis.value,
             environment: view.state.values.environment.environment.selected_option?.text.text || "N/A",
-            service: view.state.values.service.service.selected_option?.text.text || "N/A",
+            service: view.state.values.service.service.selected_option?.text.text,
             userAffected: view.state.values.user.user.value || "N/A",
             date: view.state.values.date.date.value || "N/A",
             time: view.state.values.time.time.value || "N/A",
         }
-
-        const jiraId = await createHelpRequest({
-            summary: helpRequest.summary,
-            userEmail,
-            labels: extractLabels(view.state.values)
-        })
-
-        const result = await client.chat.postMessage({
-            channel: reportChannel,
-            text: 'New support request raised',
-            blocks: helpRequestRaised({
-                ...helpRequest,
-                jiraId
-            })
-        });
-
-        await client.chat.postMessage({
-            channel: reportChannel,
-            thread_ts: result.message.ts,
-            text: 'New support request raised',
-            blocks: helpRequestDetails(helpRequest)
-        });
-
-        const permaLink = (await client.chat.getPermalink({
-            channel: result.channel,
-            'message_ts': result.message.ts
-        })).permalink
-
-        await updateHelpRequestDescription(jiraId, {
-            ...helpRequest,
-            slackLink: permaLink
-        })
+        await handleSupportRequest(client, user, helpRequest)
     } catch (error) {
         console.error(error);
     }
-
 });
 
 

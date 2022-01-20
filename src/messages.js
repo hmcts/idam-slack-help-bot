@@ -1,22 +1,4 @@
-const { convertIso8601ToEpochSeconds } = require('./util/dateHelper');
-
-function convertJiraKeyToUrl(jiraId) {
-    return `https://tools.hmcts.net/jira/browse/${jiraId}`;
-}
-
-const slackLinkRegex = /view in Slack\|(https:\/\/.+slack\.com.+)]/
-
-function extractSlackLinkFromText(text) {
-    if (text === undefined) {
-        return undefined
-    }
-
-    const regexResult = slackLinkRegex.exec(text);
-    if (regexResult === null) {
-        return undefined
-    }
-    return regexResult[1]
-}
+const { convertIso8601ToEpochSeconds, extractSlackLinkFromText, convertJiraKeyToUrl} = require('./util/helpers');
 
 function helpRequestRaised({
                                user,
@@ -458,9 +440,11 @@ function openHelpRequestBlocks() {
     }
 }
 
-module.exports.appHomeUnassignedIssues = appHomeUnassignedIssues;
-module.exports.unassignedOpenIssue = unassignedOpenIssue;
-module.exports.helpRequestRaised = helpRequestRaised;
-module.exports.helpRequestDetails = helpRequestDetails;
-module.exports.openHelpRequestBlocks = openHelpRequestBlocks;
-module.exports.extractSlackLinkFromText = extractSlackLinkFromText;
+module.exports = {
+    appHomeUnassignedIssues,
+    unassignedOpenIssue,
+    helpRequestRaised,
+    helpRequestDetails,
+    openHelpRequestBlocks,
+    extractSlackLinkFromText
+}

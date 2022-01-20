@@ -2,16 +2,9 @@ const JiraApi = require('jira-client');
 const config = require('config')
 const {getContextElement} = require("../util/blockHelper");
 const {createComment, mapFieldsToDescription} = require("./jiraMessages");
+const types = require('./jiraTicketTypes');
 
 const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
-const issueTypeId = config.get('jira.issue_type_id')
-const issueTypeName = config.get('jira.issue_type_name')
-const bugTypeId = config.get('jira.bug_type_id')
-const bugTypeName = config.get('jira.bug_type_name')
-const serviceTypeId = config.get('jira.service_type_id')
-const serviceTypeName = config.get('jira.service_type_name')
-const roleTypeId = config.get('jira.role_type_id')
-const roleTypeName = config.get('jira.role_type_name')
 const jiraProject = config.get('jira.project')
 const jiraStartTransitionId = config.get('jira.start_transition_id')
 const jiraDoneTransitionId = config.get('jira.done_transition_id')
@@ -51,7 +44,7 @@ async function startHelpRequest(jiraId) {
 
 
 async function searchForUnassignedOpenIssues() {
-    const jqlQuery = `project = ${jiraProject} AND type = "${issueTypeName}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
+    const jqlQuery = `project = ${jiraProject} AND type = "${types.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
     try {
         return await jira.searchJira(
             jqlQuery,
@@ -107,7 +100,7 @@ async function createHelpRequestInJira(summary, project, user, labels) {
         fields: {
             summary: summary,
             issuetype: {
-                id: issueTypeId
+                id: types.ISSUE.id
             },
             project: {
                 id: project.id

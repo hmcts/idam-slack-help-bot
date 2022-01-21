@@ -15,7 +15,6 @@ const {
     resolveHelpRequest,
     searchForUnassignedOpenIssues,
     startHelpRequest,
-    updateHelpRequestDescription
 } = require("./src/service/persistence");
 
 const app = new App({
@@ -26,11 +25,11 @@ const app = new App({
 });
 
 const http = require('http');
+const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, getSectionField} = require("./src/util/blockHelper");
 
-const reportChannel = config.get('slack.report_channel');
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
 
@@ -64,6 +63,7 @@ server.listen(port, () => {
 })();
 
 app.step(createSupportRequestStep());
+app.step(reportBugWorkflowStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()

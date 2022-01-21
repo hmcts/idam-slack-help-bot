@@ -95,12 +95,12 @@ function convertEmail(email) {
     return email.split('@')[0]
 }
 
-async function createHelpRequestInJira(summary, project, user) {
+async function createHelpRequestInJira(summary, project, user, issueType = types.ISSUE.id) {
     return await jira.addNewIssue({
         fields: {
             summary: summary,
             issuetype: {
-                id: types.ISSUE.id
+                id: issueType
             },
             project: {
                 id: project.id
@@ -114,10 +114,7 @@ async function createHelpRequestInJira(summary, project, user) {
     });
 }
 
-async function createHelpRequest({
-                                     summary,
-                                     userEmail,
-                                 }) {
+async function createHelpRequest({ summary, userEmail}, issueType = types.ISSUE.id) {
     const user = convertEmail(userEmail)
     const project = await jira.getProject(jiraProject)
 
@@ -125,10 +122,10 @@ async function createHelpRequest({
     // note: fields don't match 100%, our Jira version is a bit old (still a supported LTS though)
     let result
     try {
-        result = await createHelpRequestInJira(summary, project, user);
+        result = await createHelpRequestInJira(summary, project, user, issueType);
     } catch (err) {
         // in case the user doesn't exist in Jira use the system user
-        result = await createHelpRequestInJira(summary, project, systemUser);
+        result = await createHelpRequestInJira(summary, project, systemUser, issueType);
     }
 
     return result.key

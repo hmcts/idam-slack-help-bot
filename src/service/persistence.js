@@ -95,7 +95,7 @@ function convertEmail(email) {
     return email.split('@')[0]
 }
 
-async function createHelpRequestInJira(summary, project, user, labels) {
+async function createHelpRequestInJira(summary, project, user) {
     return await jira.addNewIssue({
         fields: {
             summary: summary,
@@ -105,7 +105,7 @@ async function createHelpRequestInJira(summary, project, user, labels) {
             project: {
                 id: project.id
             },
-            labels: ['created-from-slack', ...labels],
+            labels: ['created-from-slack'],
             description: undefined,
             reporter: {
                 name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
@@ -117,7 +117,6 @@ async function createHelpRequestInJira(summary, project, user, labels) {
 async function createHelpRequest({
                                      summary,
                                      userEmail,
-                                     labels
                                  }) {
     const user = convertEmail(userEmail)
     const project = await jira.getProject(jiraProject)
@@ -126,10 +125,10 @@ async function createHelpRequest({
     // note: fields don't match 100%, our Jira version is a bit old (still a supported LTS though)
     let result
     try {
-        result = await createHelpRequestInJira(summary, project, user, labels);
+        result = await createHelpRequestInJira(summary, project, user);
     } catch (err) {
         // in case the user doesn't exist in Jira use the system user
-        result = await createHelpRequestInJira(summary, project, systemUser, labels);
+        result = await createHelpRequestInJira(summary, project, systemUser);
     }
 
     return result.key

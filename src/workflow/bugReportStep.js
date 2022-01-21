@@ -1,8 +1,9 @@
-const {handleSupportRequest} = require("../service/helpRequestManager");
+const types = require("../service/jiraTicketTypes");
+const {handleBugReport} = require("../service/helpRequestManager");
 const {WorkflowStep} = require("@slack/bolt");
 
-function createSupportRequestWorkflowStep() {
-    return new WorkflowStep('support_request_step', {
+function reportBugWorkflowStep() {
+    return new WorkflowStep('bug_report_step', {
         edit: async ({ ack, step, configure, client }) => {
             await ack();
 
@@ -29,11 +30,12 @@ function createSupportRequestWorkflowStep() {
                     analysis: inputs.analysis.value,
                     environment: inputs.environment.value || "N/A",
                     service: inputs.service.value,
-                    userAffected: inputs.user_affected.value || "N/A",
-                    date: inputs.date.value || "N/A",
-                    time: inputs.time.value || "N/A",
+                    impact: inputs.impact.value || "N/A",
+                    steps: inputs.steps.value || "N/A",
+                    expected: inputs.expected.value || "N/A",
+                    actual: inputs.actual.value || "N/A"
                 }
-                await handleSupportRequest(client, user, helpRequest)
+                await handleBugReport(client, user, helpRequest, types.ISSUE.id)
             } catch (error) {
                 console.error(error);
             }
@@ -110,41 +112,54 @@ function workflowStepBlocks(inputs) {
         },
         {
             "type": "input",
-            "block_id": "user_affected",
+            "block_id": "impact",
             "label": {
                 "type": "plain_text",
-                "text": "User affected"
+                "text": "Impact to user and/or service"
             },
             "element": {
                 "type": "plain_text_input",
-                "action_id": "user_affected",
-                "initial_value": inputs?.user_affected?.value ?? ""
+                "action_id": "impact",
+                "initial_value": inputs?.impact?.value ?? ""
             }
         },
         {
             "type": "input",
-            "block_id": "date",
+            "block_id": "steps",
             "label": {
                 "type": "plain_text",
-                "text": "Date the issue occurred"
+                "text": "Steps to reproduce"
             },
             "element": {
                 "type": "plain_text_input",
-                "action_id": "date",
-                "initial_value": inputs?.date?.value ?? ""
+                "action_id": "steps",
+                "initial_value": inputs?.steps?.value ?? ""
             }
         },
         {
             "type": "input",
-            "block_id": "time",
+            "block_id": "expected",
             "label": {
                 "type": "plain_text",
-                "text": "Time the issue occurred"
+                "text": "Expected behaviour"
             },
             "element": {
                 "type": "plain_text_input",
-                "action_id": "time",
-                "initial_value": inputs?.time?.value ?? ""
+                "action_id": "expected",
+                "initial_value": inputs?.expected?.value ?? ""
+            }
+        },
+        {
+            "type": "input",
+            "block_id": "actual",
+            "label": {
+                "type": "plain_text",
+                "text": "Actual behaviour"
+            },
+            "element": {
+                "type": "plain_text_input",
+                "action_id": "actual",
+                "initial_value": inputs?.actual?.value ?? ""
             }
         },
         {
@@ -180,14 +195,17 @@ function workflowStepView(values) {
         service: {
             value: values.service.service.value
         },
-        user_affected: {
-            value: values.user_affected.user_affected.value
+        impact: {
+            value: values.impact.impact.value
         },
-        date: {
-            value: values.date.date.value
+        steps: {
+            value: values.steps.steps.value
         },
-        time: {
-            value: values.time.time.value
+        expected: {
+            value: values.expected.expected.value
+        },
+        actual: {
+            value: values.actual.actual.value
         },
         user: {
             value: values.user.user.selected_user
@@ -195,4 +213,4 @@ function workflowStepView(values) {
     };
 }
 
-module.exports.createSupportRequestStep = createSupportRequestWorkflowStep
+module.exports.reportBugWorkflowStep = reportBugWorkflowStep

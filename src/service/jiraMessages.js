@@ -1,41 +1,42 @@
-function optionalField(prefix, value) {
+function shortField(prefix, value) {
     if (value) {
         return `*${prefix}*: ${value}`
     }
     return ""
 }
 
-function mapFieldsToDescription(
-    {
-        environment,
-        service,
-        userAffected,
-        date,
-        time,
-        description,
-        analysis,
-        slackLink
-    }) {
+function longField(title, value) {
+    if (value) {
+        return `*${title}*\n\n${value}\n`
+    }
+    return ""
+}
+
+function mapFieldsToDescription(fields) {
     return `
-h6. _This is an automatically generated ticket created from Slack, do not reply or update in here, [view in Slack|${slackLink}]_
+h6. _This is an automatically generated ticket created from Slack, do not reply or update in here, [view in Slack|${fields.slackLink}]_
 
-${optionalField('Environment', environment)}
+${shortField('Environment', fields.hasOwnProperty('environment') ? fields.environment : null)}
 
-${optionalField('Service affected', service)}
+${shortField('Service affected', fields.hasOwnProperty('service') ? fields.service : null)}
 
-${optionalField('User Affected', userAffected)}
+${shortField('User affected', fields.hasOwnProperty('userAffected') ? fields.userAffected : null)}
 
-${optionalField('Date issue occurred', date)}
+${shortField('Date issue Occurred', fields.hasOwnProperty('date') ? fields.date : null)}
 
-${optionalField('Time issue Occurred', time)}
+${shortField('Time issue Occurred', fields.hasOwnProperty('time') ? fields.time : null)}
 
-*Issue description*
+${shortField('Impact to user and/or service', fields.hasOwnProperty('impact') ? fields.impact : null)}
 
-${description}
+${longField('Issue description', fields.hasOwnProperty('description') ? fields.description : null)}
 
-*Analysis done so far*
+${longField('Analysis done so far', fields.hasOwnProperty('analysis') ? fields.analysis : null)}
 
-${analysis}
+${longField('Steps to reproduce', fields.hasOwnProperty('steps') ? fields.steps : null)}
+
+${longField('Expected behaviour', fields.hasOwnProperty('expected') ? fields.expected : null)}
+
+${longField('Actual behaviour', fields.hasOwnProperty('actual') ? fields.actual : null)}
 `
 }
 

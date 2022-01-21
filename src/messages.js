@@ -1,139 +1,130 @@
-const { convertIso8601ToEpochSeconds, extractSlackLinkFromText, convertJiraKeyToUrl} = require('./util/helpers');
+const {action, jiraView, title, textField} = require("./util/helpers");
+const {convertIso8601ToEpochSeconds, extractSlackLinkFromText, convertJiraKeyToUrl} = require('./util/helpers');
 
-function helpRequestRaised({
-                               user,
-                               summary,
-                               environment,
-                               service,
-                               userAffected,
-                               jiraId
+function supportRequestRaised({
+                                  user,
+                                  summary,
+                                  environment,
+                                  service,
+                                  userAffected,
+                                  jiraId
                            }) {
     return [
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": `*${summary}*`,
-            }
-        },
+        title(summary),
         {
             "type": "divider"
         },
         {
             "type": "section",
             "fields": [
-                {
-                    "type": "mrkdwn",
-                    "text": "*Status* :fire:  \n Open"
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*Reporter* :man-surfing: \n <@${user}>`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*Environment* :house_with_garden: \n ${environment}`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*Service affected* :service_dog: \n ${service}`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*User affected* :person_with_probing_cane: \n ${userAffected}`
-                }
+                textField("*Issue type* :weight_lifter: \n Support request"),
+                textField("*Status* :fire: \n Open"),
+                textField(`*Reporter* :man-surfing: \n <@${user}>`),
+                textField(`*Environment* :house_with_garden: \n ${environment}`),
+                textField(`*Service affected* :service_dog: \n ${service}`),
+                textField(`*User affected* :person_with_probing_cane: \n ${userAffected}`)
             ]
         },
-        {
-            "type": "context",
-            "elements": [
-                {
-                    "type": "mrkdwn",
-                    "text": `View on Jira: <${convertJiraKeyToUrl(jiraId)}|${jiraId}>`
-                }
-            ]
-        },
+        jiraView(jiraId),
         {
             "type": "divider"
         },
-        {
-            "type": "actions",
-            "block_id": "actions",
-            "elements": [
-                {
-                    "type": "users_select",
-                    "placeholder": {
-                        "type": "plain_text",
-                        "text": "Unassigned",
-                        "emoji": true
-                    },
-                    "action_id": "assign_help_request_to_user"
-                },
-                {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": ":raising_hand: Take it",
-                        "emoji": true
-                    },
-                    "style": "primary",
-                    "value": "assign_help_request_to_me",
-                    "action_id": "assign_help_request_to_me"
-                },
-                {
-                    "type": "button",
-                    "text": {
-                        "type": "plain_text",
-                        "text": ":female-firefighter: Start",
-                        "emoji": true
-                    },
-                    "style": "primary",
-                    "value": "start_help_request",
-                    "action_id": "start_help_request"
-                }
-            ]
-        },
+        action(),
         {
             "type": "divider"
         }
     ]
 }
 
-function helpRequestDetails(
-    {
-        description,
-        analysis,
-        date,
-        time
+function supportRequestDetails({
+                                   description,
+                                   analysis,
+                                   date,
+                                   time
     }) {
     return [
         {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": `*Description* :spiral_note_pad: \n ${description}`
-            }
+            "text": textField(`*Description* :spiral_note_pad: \n ${description}`)
         },
         {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": `*Analysis* :thinking_face: \n ${analysis}`
-            }
+            "text": textField(`*Analysis* :thinking_face: \n ${analysis}`)
         },
         {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": `*Date issue occurred* :date: \n ${date}`
-            }
+            "text": textField(`*Date issue occurred* :date: \n ${date}`)
         },
         {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": `*Time issue occurred* :hourglass: \n ${time}`
-            }
+            "text": textField(`*Time issue occurred* :hourglass: \n ${time}`)
+        }
+    ]
+}
+
+function bugRaised({
+                       user,
+                       summary,
+                       environment,
+                       service,
+                       impact,
+                       jiraId
+}) {
+    return [
+        title(summary),
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "fields": [
+                textField("*Issue type* :lady_beetle: \n Bug"),
+                textField("*Status* :fire: \n Open"),
+                textField(`*Reporter* :man-surfing: \n <@${user}>`),
+                textField(`*Environment* :house_with_garden: \n ${environment}`),
+                textField(`*Service affected* :service_dog: \n ${service}`),
+                textField(`*Impact to user and/or service* :muscle: \n ${impact}`)
+            ]
+        },
+        jiraView(jiraId),
+        {
+            "type": "divider"
+        },
+        action(),
+        {
+            "type": "divider"
+        }
+    ]
+}
+
+function bugDetails(
+    {
+        description,
+        analysis,
+        steps,
+        expected,
+        actual
+    }) {
+    return [
+        {
+            "type": "section",
+            "text": textField(`*Description* :spiral_note_pad: \n ${description}`)
+        },
+        {
+            "type": "section",
+            "text": textField(`*Analysis* :thinking_face: \n ${analysis}`)
+        },
+        {
+            "type": "section",
+            "text": textField(`*Steps to reproduce* :ladder: \n ${steps}`)
+        },
+        {
+            "type": "section",
+            "text": textField(`*Expected behaviour* :rainbow: \n ${expected}`)
+        },
+        {
+            "type": "section",
+            "text": textField(`*Actual behaviour* :thunder_cloud_and_rain: \n ${actual}`)
         }
     ]
 }
@@ -154,10 +145,7 @@ function unassignedOpenIssue({
         {
             "type": "section",
             "block_id": `${jiraId}_link`,
-            "text": {
-                "type": "mrkdwn",
-                "text": `*<${link}|${summary}>*`
-            },
+            "text": textField(`*<${link}|${summary}>*`)
         },
         {
             "type": "actions",
@@ -187,18 +175,9 @@ function unassignedOpenIssue({
             "type": "section",
             "block_id": `${jiraId}_fields`,
             "fields": [
-                {
-                    "type": "mrkdwn",
-                    "text": `*:alarm_clock: Opened:*\n <!date^${convertIso8601ToEpochSeconds(created)}^{date_pretty} ({time})|${created}>`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*:hourglass: Last Updated:*\n <!date^${convertIso8601ToEpochSeconds(updated)}^{date_pretty} ({time})|${updated}>`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*View on Jira*:\n <${convertJiraKeyToUrl(jiraId)}|${jiraId}>`
-                }
+                textField(`*:alarm_clock: Opened:*\n <!date^${convertIso8601ToEpochSeconds(created)}^{date_pretty} ({time})|${created}>`),
+                textField(`*:hourglass: Last Updated:*\n <!date^${convertIso8601ToEpochSeconds(updated)}^{date_pretty} ({time})|${updated}>`),
+                textField(`*View on Jira*:\n <${convertJiraKeyToUrl(jiraId)}|${jiraId}>`)
             ]
         },
         ]
@@ -208,10 +187,7 @@ function appHomeUnassignedIssues(openIssueBlocks) {
     return [
         {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": "*Open unassigned issues*"
-            }
+            "text": textField("*Open unassigned issues*")
         },
         {
             "type": "actions",
@@ -275,10 +251,7 @@ function openHelpRequestBlocks() {
                         "text": "Short description of the issue"
                     }
                 },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Issue summary"
-                }
+                "label": textField("Issue summary")
             },
             {
                 "type": "input",
@@ -443,8 +416,10 @@ function openHelpRequestBlocks() {
 module.exports = {
     appHomeUnassignedIssues,
     unassignedOpenIssue,
-    helpRequestRaised,
-    helpRequestDetails,
+    supportRequestRaised,
+    supportRequestDetails,
+    bugRaised,
+    bugDetails,
     openHelpRequestBlocks,
     extractSlackLinkFromText
 }

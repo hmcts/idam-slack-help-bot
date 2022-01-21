@@ -145,10 +145,7 @@ function unassignedOpenIssue({
         {
             "type": "section",
             "block_id": `${jiraId}_link`,
-            "text": {
-                "type": "mrkdwn",
-                "text": `*<${link}|${summary}>*`
-            },
+            "text": textField(`*<${link}|${summary}>*`)
         },
         {
             "type": "actions",
@@ -178,18 +175,9 @@ function unassignedOpenIssue({
             "type": "section",
             "block_id": `${jiraId}_fields`,
             "fields": [
-                {
-                    "type": "mrkdwn",
-                    "text": `*:alarm_clock: Opened:*\n <!date^${convertIso8601ToEpochSeconds(created)}^{date_pretty} ({time})|${created}>`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*:hourglass: Last Updated:*\n <!date^${convertIso8601ToEpochSeconds(updated)}^{date_pretty} ({time})|${updated}>`
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": `*View on Jira*:\n <${convertJiraKeyToUrl(jiraId)}|${jiraId}>`
-                }
+                textField(`*:alarm_clock: Opened:*\n <!date^${convertIso8601ToEpochSeconds(created)}^{date_pretty} ({time})|${created}>`),
+                textField(`*:hourglass: Last Updated:*\n <!date^${convertIso8601ToEpochSeconds(updated)}^{date_pretty} ({time})|${updated}>`),
+                textField(`*View on Jira*:\n <${convertJiraKeyToUrl(jiraId)}|${jiraId}>`)
             ]
         },
         ]
@@ -199,10 +187,7 @@ function appHomeUnassignedIssues(openIssueBlocks) {
     return [
         {
             "type": "section",
-            "text": {
-                "type": "mrkdwn",
-                "text": "*Open unassigned issues*"
-            }
+            "text": textField("*Open unassigned issues*")
         },
         {
             "type": "actions",
@@ -266,10 +251,7 @@ function openHelpRequestBlocks() {
                         "text": "Short description of the issue"
                     }
                 },
-                "label": {
-                    "type": "plain_text",
-                    "text": "Issue summary"
-                }
+                "label": textField("Issue summary")
             },
             {
                 "type": "input",

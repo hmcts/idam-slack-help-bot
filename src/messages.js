@@ -1,4 +1,4 @@
-const types = require("./service/jiraTicketTypes");
+const {JiraType} = require("./service/jiraTicketTypes");
 const {action, jiraView, title, textField} = require("./util/helpers");
 const {convertIso8601ToEpochSeconds, extractSlackLinkFromText, convertJiraKeyToUrl} = require('./util/helpers');
 
@@ -18,7 +18,7 @@ function supportRequestRaised({
         {
             "type": "section",
             "fields": [
-                textField("*Issue type* :weight_lifter: \n Support request"),
+                textField(`*Issue type* :weight_lifter: \n ${JiraType.ISSUE.requestType}`),
                 textField("*Status* :fire: \n Open"),
                 textField(`*Reporter* :man-surfing: \n <@${user}>`),
                 textField(`*Environment* :house_with_garden: \n ${environment}`),
@@ -79,7 +79,7 @@ function bugRaised({
         {
             "type": "section",
             "fields": [
-                textField("*Issue type* :lady_beetle: \n Bug"),
+                textField(`*Issue type* :lady_beetle: \n ${JiraType.BUG.requestType}`),
                 textField("*Status* :fire: \n Open"),
                 textField(`*Reporter* :man-surfing: \n <@${user}>`),
                 textField(`*Environment* :house_with_garden: \n ${environment}`),
@@ -148,7 +148,7 @@ function newServiceRequestRaised({
         {
             "type": "section",
             "fields": [
-                textField("*Issue type* :service_dog: \n OpenID Connect Service"),
+                textField(`*Issue type* :service_dog: \n ${JiraType.SERVICE.requestType}`),
                 textField("*Status* :fire: \n Open"),
                 textField(`*Reporter* :man-surfing: \n <@${user}>`),
                 textField(`*Service name* :name_badge: \n ${service}`),
@@ -215,7 +215,7 @@ function newRoleRequestRaised({
         {
             "type": "section",
             "fields": [
-                textField("*Issue type* :bust_in_silhouette: \n User Role"),
+                textField(`*Issue type* :bust_in_silhouette: \n ${JiraType.ROLE.requestType}`),
                 textField("*Status* :fire: \n Open"),
                 textField(`*Reporter* :man-surfing: \n <@${user}>`),
                 textField(`*Reporter team* :man-woman-girl-boy: \n ${team}`),

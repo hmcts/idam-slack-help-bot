@@ -1,4 +1,3 @@
-const types = require("../service/jiraTicketTypes");
 const {handleBugReport} = require("../service/helpRequestManager");
 const {WorkflowStep} = require("@slack/bolt");
 
@@ -35,7 +34,7 @@ function reportBugWorkflowStep() {
                     expected: inputs.expected.value || "N/A",
                     actual: inputs.actual.value || "N/A"
                 }
-                await handleBugReport(client, user, helpRequest, types.ISSUE.id)
+                await handleBugReport(client, user, helpRequest)
             } catch (error) {
                 console.error(error);
             }

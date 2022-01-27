@@ -25,6 +25,7 @@ const app = new App({
 });
 
 const http = require('http');
+const {JiraType} = require("./src/service/jiraTicketTypes");
 const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
 const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
@@ -194,7 +195,6 @@ app.action('assign_help_request_to_me', async ({
     } catch (error) {
         console.error(error);
     }
-
 })
 
 app.action('resolve_help_request', async ({
@@ -202,11 +202,13 @@ app.action('resolve_help_request', async ({
                                           }) => {
     try {
         await ack();
-        const jiraId = extractJiraIdFromBlocks(body.message.blocks)
-
-        await resolveHelpRequest(jiraId) // TODO add optional resolution comment
-
         const blocks = body.message.blocks
+        const jiraId = extractJiraIdFromBlocks(blocks)
+
+        const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
+        const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
+
+        await resolveHelpRequest(jiraId, jiraType.endTransitionId) // TODO add optional resolution comment
         const value = {
             "type": "button",
             "text": {
@@ -238,11 +240,15 @@ app.action('start_help_request', async ({
                                         }) => {
     try {
         await ack();
-        const jiraId = extractJiraIdFromBlocks(body.message.blocks)
-
-        await startHelpRequest(jiraId) // TODO add optional resolution comment
 
         const blocks = body.message.blocks
+        const jiraId = extractJiraIdFromBlocks(blocks)
+
+        const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
+        const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
+
+        await startHelpRequest(jiraId, jiraType.startTransitionId) // TODO add optional resolution comment
+
         const value = {
             "type": "button",
             "text": {

@@ -1,4 +1,4 @@
-const types = require("./jiraTicketTypes");
+const {JiraType} = require("./jiraTicketTypes");
 const {newServiceRequestDetails} = require("../messages");
 
 const {createHelpRequest, updateHelpRequestDescription} = require("./persistence");
@@ -27,7 +27,7 @@ async function handleSupportRequest(client, user, helpRequest) {
 
 async function handleBugReport(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest(helpRequest, userEmail, types.BUG.id)
+    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.BUG.id)
 
     const permaLink = await postSlackMessages(client,
         bugRaised({
@@ -45,7 +45,7 @@ async function handleBugReport(client, user, helpRequest) {
 
 async function handleNewServiceRequest(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest(helpRequest, userEmail, types.SERVICE.id)
+    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.SERVICE.id)
 
     await postSlackMessages(client,
         newServiceRequestRaised({
@@ -58,7 +58,7 @@ async function handleNewServiceRequest(client, user, helpRequest) {
 
 async function handleNewRoleRequest(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest(helpRequest, userEmail, types.ROLE.id)
+    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.ROLE.id)
 
     await postSlackMessages(client,
         newRoleRequestRaised({

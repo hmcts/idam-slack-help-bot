@@ -2,12 +2,10 @@ const JiraApi = require('jira-client');
 const config = require('config')
 const {getContextElement} = require("../util/blockHelper");
 const {createComment, mapFieldsToDescription} = require("./jiraMessages");
-const types = require('./jiraTicketTypes');
+const {JiraType} = require('./jiraTicketTypes');
 
 const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
 const jiraProject = config.get('jira.project')
-const jiraStartTransitionId = config.get('jira.start_transition_id')
-const jiraDoneTransitionId = config.get('jira.done_transition_id')
 const extractProjectRegex = new RegExp(`(${jiraProject}-[\\d]+)`)
 
 const jira = new JiraApi({
@@ -18,7 +16,7 @@ const jira = new JiraApi({
     strictSSL: true
 });
 
-async function resolveHelpRequest(jiraId) {
+async function resolveHelpRequest(jiraId, jiraDoneTransitionId) {
     try {
         await jira.transitionIssue(jiraId, {
             transition: {
@@ -30,7 +28,7 @@ async function resolveHelpRequest(jiraId) {
     }
 }
 
-async function startHelpRequest(jiraId) {
+async function startHelpRequest(jiraId, jiraStartTransitionId) {
     try {
         await jira.transitionIssue(jiraId, {
             transition: {
@@ -44,7 +42,7 @@ async function startHelpRequest(jiraId) {
 
 
 async function searchForUnassignedOpenIssues() {
-    const jqlQuery = `project = ${jiraProject} AND type = "${types.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
+    const jqlQuery = `project = ${jiraProject} AND type = "${JiraType.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
     try {
         return await jira.searchJira(
             jqlQuery,
@@ -95,11 +93,11 @@ function convertEmail(email) {
     return email.split('@')[0]
 }
 
-async function createHelpRequestInJira(helpRequest, project, user, issueType = types.ISSUE.id) {
+async function createHelpRequestInJira(helpRequest, project, user, issueType = JiraType.ISSUE.id) {
     return await jira.addNewIssue(constructJiraIssue(helpRequest, project, user, issueType));
 }
 
-async function createHelpRequest(helpRequest, userEmail, issueType = types.ISSUE.id) {
+async function createHelpRequest(helpRequest, userEmail, issueType = JiraType.ISSUE.id) {
     const user = convertEmail(userEmail)
     const project = await jira.getProject(jiraProject)
 
@@ -142,14 +140,14 @@ async function addCommentToHelpRequest(externalSystemId, fields) {
 function constructJiraIssue(helpRequest, project, user, issueType) {
     const defaultFields = defaultJiraIssueFields(helpRequest.summary, project, user, issueType);
     switch(issueType) {
-        case types.SERVICE.id:
+        case JiraType.SERVICE.id:
             return constructOidcServiceJiraIssue(helpRequest, defaultFields);
             break;
-        case types.ROLE.id:
+        case JiraType.ROLE.id:
             return constructUserRoleJiraIssue(helpRequest, defaultFields)
             break;
-        case types.ISSUE.id:
-        case types.BUG.id:
+        case JiraType.ISSUE.id:
+        case JiraType.BUG.id:
         default:
             return constructDefaultJiraIssue(defaultFields);
             break;
@@ -167,10 +165,10 @@ function defaultJiraIssueFields(summary, project, user, issueType) {
         },
         labels: ['created-from-slack'],
         description: undefined,
-        // reporter: {
-        //     name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
-        // },
-        //customfield_10008: 'SIDM-6950'
+        reporter: {
+            name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
+        },
+        customfield_10008: 'SIDM-6950'
     }
 }
 

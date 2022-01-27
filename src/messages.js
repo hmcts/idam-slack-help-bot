@@ -1,3 +1,4 @@
+const types = require("./service/jiraTicketTypes");
 const {action, jiraView, title, textField} = require("./util/helpers");
 const {convertIso8601ToEpochSeconds, extractSlackLinkFromText, convertJiraKeyToUrl} = require('./util/helpers');
 
@@ -97,13 +98,12 @@ function bugRaised({
     ]
 }
 
-function bugDetails(
-    {
-        description,
-        analysis,
-        steps,
-        expected,
-        actual
+function bugDetails({
+                        description,
+                        analysis,
+                        steps,
+                        expected,
+                        actual
     }) {
     return [
         {
@@ -125,6 +125,113 @@ function bugDetails(
         {
             "type": "section",
             "text": textField(`*Actual behaviour* :thunder_cloud_and_rain: \n ${actual}`)
+        }
+    ]
+}
+
+function newServiceRequestRaised({
+                                     user,
+                                     summary,
+                                     service,
+                                     description,
+                                     client_id,
+                                     client_secret,
+                                     key_vault,
+                                     redirect_uri,
+                                     jiraId
+}) {
+    return [
+        title(summary),
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "fields": [
+                textField("*Issue type* :service_dog: \n OpenID Connect Service"),
+                textField("*Status* :fire: \n Open"),
+                textField(`*Reporter* :man-surfing: \n <@${user}>`),
+                textField(`*Service name* :name_badge: \n ${service}`),
+                textField(`*Service description* :spiral_note_pad: \n ${description}`),
+                textField(`*Service client ID* :id: \n ${client_id}`),
+                textField(`*Service client secret name* :secret: \n ${client_secret}`),
+                textField(`*Service Azure key vault instance* :key: \n ${key_vault}`),
+                textField(`*Service redirect URIs* :hedgehog: \n ${redirect_uri}`)
+            ]
+        },
+        jiraView(jiraId),
+        {
+            "type": "divider"
+        },
+        action(),
+        {
+            "type": "divider"
+        }
+    ]
+}
+
+function newServiceRequestDetails({
+                                      self_registration,
+                                      mfa,
+                                      sso,
+                                      admin_management,
+                                      super_user,
+                                      user_search,
+                                      user_registration,
+                                      user_management
+}) {
+    return [
+        {
+            "type": "section",
+            "fields": [
+                textField(`*Self-registration enabled?* :selfie: \n ${self_registration}`),
+                textField(`*MFA enabled?* :nesting_dolls: \n ${mfa}`),
+                textField(`*Judicial SSO enabled?* :one: \n ${sso}`),
+                textField(`*Super user or admin user access for managing users required?* :superhero: \n ${admin_management}`),
+                textField(`*Super user email address* :email: \n ${super_user}`),
+                textField(`*User search via API enabled?* :mag: \n ${user_search}`),
+                textField(`*User registration via API enabled?* :registered: \n ${user_registration}`),
+                textField(`*User management via API enabled?* :man_dancing: \n ${user_management}`)
+            ]
+        }
+    ]
+}
+
+function newRoleRequestRaised({
+                                  user,
+                                  summary,
+                                  team,
+                                  role,
+                                  description,
+                                  ccd_admin,
+                                  prd_admin,
+                                  jiraId
+}) {
+    return [
+        title(summary),
+        {
+            "type": "divider"
+        },
+        {
+            "type": "section",
+            "fields": [
+                textField("*Issue type* :bust_in_silhouette: \n User Role"),
+                textField("*Status* :fire: \n Open"),
+                textField(`*Reporter* :man-surfing: \n <@${user}>`),
+                textField(`*Reporter team* :man-woman-girl-boy: \n ${team}`),
+                textField(`*Role name* :name_badge: \n ${role}`),
+                textField(`*Role description* :spiral_note_pad: \n ${description}`),
+                textField(`*Can CCD admin users manage this role?* :firecracker: \n ${ccd_admin}`),
+                textField(`*Can PRD admin users manage this role?* :balloon: \n ${prd_admin}`)
+            ]
+        },
+        jiraView(jiraId),
+        {
+            "type": "divider"
+        },
+        action(),
+        {
+            "type": "divider"
         }
     ]
 }
@@ -420,6 +527,9 @@ module.exports = {
     supportRequestDetails,
     bugRaised,
     bugDetails,
+    newServiceRequestRaised,
+    newServiceRequestDetails,
+    newRoleRequestRaised,
     openHelpRequestBlocks,
     extractSlackLinkFromText
 }

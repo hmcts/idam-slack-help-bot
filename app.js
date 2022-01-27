@@ -25,6 +25,8 @@ const app = new App({
 });
 
 const http = require('http');
+const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
+const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
 const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
@@ -64,6 +66,8 @@ server.listen(port, () => {
 
 app.step(createSupportRequestStep());
 app.step(reportBugWorkflowStep());
+app.step(createNewServiceRequestWorkflowStep());
+app.step(createNewRoleRequestWorkflowStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()

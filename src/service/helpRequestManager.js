@@ -1,36 +1,24 @@
-const types = require("./jiraTicketTypes");
+const {JiraType} = require("./jiraTicketTypes");
+const {newServiceRequestDetails} = require("../messages");
 
 const {createHelpRequest, updateHelpRequestDescription} = require("./persistence");
-const {supportRequestRaised, supportRequestDetails, bugRaised, bugDetails} = require("../messages");
+const {supportRequestRaised, supportRequestDetails, bugRaised, bugDetails, newRoleRequestRaised, newServiceRequestRaised} = require("../messages");
 
 const config = require('@hmcts/properties-volume').addTo(require('config'))
 const reportChannel = config.get('slack.report_channel');
 
 async function handleSupportRequest(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest({
-        summary: helpRequest.summary,
-        userEmail
-    })
+    const jiraId = await createHelpRequest(helpRequest, userEmail);
 
-    const blocks = supportRequestRaised({
-        ...helpRequest,
-        jiraId
-    })
-    const result = await client.chat.postMessage({
-        channel: reportChannel,
-        text: 'New support request raised',
-        blocks: blocks
-    })
+    const permaLink = await postSlackMessages(client,
+        supportRequestRaised({
+            ...helpRequest,
+            jiraId
+        }),
+        supportRequestDetails(helpRequest)
+    )
 
-    await client.chat.postMessage({
-        channel: reportChannel,
-        thread_ts: result.message.ts,
-        text: 'New support request raised',
-        blocks: supportRequestDetails(helpRequest)
-    })
-
-    const permaLink = await getPermaLink(client, result)
     await updateHelpRequestDescription(jiraId, {
         ...helpRequest,
         slackLink: permaLink
@@ -39,34 +27,45 @@ async function handleSupportRequest(client, user, helpRequest) {
 
 async function handleBugReport(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest({
-            summary: helpRequest.summary,
-            userEmail
-        },
-        types.BUG.id
-    )
+    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.BUG.id)
 
-    const result = await client.chat.postMessage({
-        channel: reportChannel,
-        text: 'New bug raised',
-        blocks: bugRaised({
+    const permaLink = await postSlackMessages(client,
+        bugRaised({
             ...helpRequest,
             jiraId
-        })
-    })
+        }),
+        bugDetails(helpRequest)
+    )
 
-    await client.chat.postMessage({
-        channel: reportChannel,
-        thread_ts: result.message.ts,
-        text: 'New bug raised',
-        blocks: bugDetails(helpRequest)
-    })
-
-    const permaLink = await getPermaLink(client, result)
     await updateHelpRequestDescription(jiraId, {
         ...helpRequest,
         slackLink: permaLink
     })
+}
+
+async function handleNewServiceRequest(client, user, helpRequest) {
+    const userEmail = await getUserEmail(client, user)
+    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.SERVICE.id)
+
+    await postSlackMessages(client,
+        newServiceRequestRaised({
+            ...helpRequest,
+            jiraId
+        }),
+        newServiceRequestDetails(helpRequest)
+    )
+}
+
+async function handleNewRoleRequest(client, user, helpRequest) {
+    const userEmail = await getUserEmail(client, user)
+    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.ROLE.id)
+
+    await postSlackMessages(client,
+        newRoleRequestRaised({
+            ...helpRequest,
+            jiraId
+        }),
+    )
 }
 
 async function getUserEmail(client, user) {
@@ -82,7 +81,29 @@ async function getPermaLink(client, result) {
     })).permalink
 }
 
+async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks) {
+    const text = 'New request raised'
+    const result = await client.chat.postMessage({
+        channel: reportChannel,
+        text: text,
+        blocks: requestInfoBlocks
+    })
+
+    if (requestDetailsBlocks !== undefined) {
+        await client.chat.postMessage({
+            channel: reportChannel,
+            thread_ts: result.message.ts,
+            text: text,
+            blocks: requestDetailsBlocks
+        })
+    }
+
+    return getPermaLink(client, result)
+}
+
 module.exports = {
     handleSupportRequest,
-    handleBugReport
+    handleBugReport,
+    handleNewServiceRequest,
+    handleNewRoleRequest
 }

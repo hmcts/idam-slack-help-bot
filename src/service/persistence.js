@@ -2,12 +2,10 @@ const JiraApi = require('jira-client');
 const config = require('config')
 const {getContextElement} = require("../util/blockHelper");
 const {createComment, mapFieldsToDescription} = require("./jiraMessages");
-const types = require('./jiraTicketTypes');
+const {JiraType} = require('./jiraTicketTypes');
 
 const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
 const jiraProject = config.get('jira.project')
-const jiraStartTransitionId = config.get('jira.start_transition_id')
-const jiraDoneTransitionId = config.get('jira.done_transition_id')
 const extractProjectRegex = new RegExp(`(${jiraProject}-[\\d]+)`)
 
 const jira = new JiraApi({
@@ -18,7 +16,7 @@ const jira = new JiraApi({
     strictSSL: true
 });
 
-async function resolveHelpRequest(jiraId) {
+async function resolveHelpRequest(jiraId, jiraDoneTransitionId) {
     try {
         await jira.transitionIssue(jiraId, {
             transition: {
@@ -30,7 +28,7 @@ async function resolveHelpRequest(jiraId) {
     }
 }
 
-async function startHelpRequest(jiraId) {
+async function startHelpRequest(jiraId, jiraStartTransitionId) {
     try {
         await jira.transitionIssue(jiraId, {
             transition: {
@@ -44,7 +42,7 @@ async function startHelpRequest(jiraId) {
 
 
 async function searchForUnassignedOpenIssues() {
-    const jqlQuery = `project = ${jiraProject} AND type = "${types.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
+    const jqlQuery = `project = ${jiraProject} AND type = "${JiraType.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
     try {
         return await jira.searchJira(
             jqlQuery,
@@ -95,26 +93,11 @@ function convertEmail(email) {
     return email.split('@')[0]
 }
 
-async function createHelpRequestInJira(summary, project, user, issueType = types.ISSUE.id) {
-    return await jira.addNewIssue({
-        fields: {
-            summary: summary,
-            issuetype: {
-                id: issueType
-            },
-            project: {
-                id: project.id
-            },
-            labels: ['created-from-slack'],
-            description: undefined,
-            reporter: {
-                name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
-            }
-        }
-    });
+async function createHelpRequestInJira(helpRequest, project, user, issueType = JiraType.ISSUE.id) {
+    return await jira.addNewIssue(constructJiraIssue(helpRequest, project, user, issueType));
 }
 
-async function createHelpRequest({ summary, userEmail}, issueType = types.ISSUE.id) {
+async function createHelpRequest(helpRequest, userEmail, issueType = JiraType.ISSUE.id) {
     const user = convertEmail(userEmail)
     const project = await jira.getProject(jiraProject)
 
@@ -122,10 +105,10 @@ async function createHelpRequest({ summary, userEmail}, issueType = types.ISSUE.
     // note: fields don't match 100%, our Jira version is a bit old (still a supported LTS though)
     let result
     try {
-        result = await createHelpRequestInJira(summary, project, user, issueType);
+        result = await createHelpRequestInJira(helpRequest, project, user, issueType);
     } catch (err) {
         // in case the user doesn't exist in Jira use the system user
-        result = await createHelpRequestInJira(summary, project, systemUser, issueType);
+        result = await createHelpRequestInJira(helpRequest, project, systemUser, issueType);
     }
 
     return result.key
@@ -152,6 +135,91 @@ async function addCommentToHelpRequest(externalSystemId, fields) {
     } catch (err) {
         console.log("Error creating comment in jira", err)
     }
+}
+
+function constructJiraIssue(helpRequest, project, user, issueType) {
+    const defaultFields = defaultJiraIssueFields(helpRequest.summary, project, user, issueType);
+    switch(issueType) {
+        case JiraType.SERVICE.id:
+            return constructOidcServiceJiraIssue(helpRequest, defaultFields);
+            break;
+        case JiraType.ROLE.id:
+            return constructUserRoleJiraIssue(helpRequest, defaultFields)
+            break;
+        case JiraType.ISSUE.id:
+        case JiraType.BUG.id:
+        default:
+            return constructDefaultJiraIssue(defaultFields);
+            break;
+    }
+}
+
+function defaultJiraIssueFields(summary, project, user, issueType) {
+    return {
+        summary: summary,
+        issuetype: {
+            id: issueType
+        },
+        project: {
+            id: project.id
+        },
+        labels: ['created-from-slack'],
+        description: undefined,
+        reporter: {
+            name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
+        },
+        customfield_10008: 'SIDM-6950'
+    }
+}
+
+function constructDefaultJiraIssue(defaultFields) {
+    return {
+        fields: {
+            ...defaultFields,
+        }
+    }
+}
+
+function constructOidcServiceJiraIssue(helpRequest, defaultFields) {
+    return {
+        fields: {
+            ...defaultFields,
+            customfield_25615: helpRequest.service,
+            customfield_25616: helpRequest.description,
+            customfield_25617: helpRequest.client_id,
+            customfield_25618: helpRequest.client_secret,
+            customfield_25619: helpRequest.key_vault,
+            customfield_25620: helpRequest.redirect_uri,
+            customfield_25621: checkboxValue(helpRequest.self_registration),
+            customfield_25622: checkboxValue(helpRequest.mfa),
+            customfield_25623: checkboxValue(helpRequest.sso),
+            customfield_25624: checkboxValue(helpRequest.admin_management),
+            customfield_25625: helpRequest.super_user,
+            customfield_25626: checkboxValue(helpRequest.user_search),
+            customfield_25627: checkboxValue(helpRequest.user_registration),
+            customfield_25628: checkboxValue(helpRequest.user_management)
+        }
+    }
+}
+
+function constructUserRoleJiraIssue(helpRequest, defaultFields) {
+    return {
+        fields: {
+            ...defaultFields,
+            customfield_21529: helpRequest.team,
+            customfield_25611: helpRequest.role,
+            customfield_25612: helpRequest.description,
+            customfield_25613: checkboxValue(helpRequest.ccd_admin),
+            customfield_25614: checkboxValue(helpRequest.prd_admin)
+        }
+    }
+}
+
+function checkboxValue(value) {
+    if (value === 'Yes') {
+        return 'on'
+    }
+    return 'N'
 }
 
 module.exports.resolveHelpRequest = resolveHelpRequest

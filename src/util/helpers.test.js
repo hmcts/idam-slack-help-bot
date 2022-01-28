@@ -1,4 +1,4 @@
-const { convertIso8601ToEpochSeconds, extractSlackLinkFromText } = require('./util/helpers');
+const { convertIso8601ToEpochSeconds, extractSlackLinkFromText } = require('./helpers');
 
 
 describe('convertIso8601ToEpochSeconds', () => {

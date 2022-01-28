@@ -2,7 +2,7 @@
 
 Based off of https://github.com/hmcts/ccd-slack-help-bot and https://github.com/hmcts/slack-help-bot
 
-Listens for new posts in a designated Slack channel and raises a corresponding request in Jira.
+Listens for new posts in a designated Slack channel and raises a corresponding issue in Jira.
 
 ## Creating the Slack App 
 <details>

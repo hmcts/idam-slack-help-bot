@@ -59,29 +59,24 @@ const action = () => {
                 },
                 "action_id": "assign_help_request_to_user"
             },
-            {
-                "type": "button",
-                "text": {
-                    "type": "plain_text",
-                    "text": ":raising_hand: Take it",
-                    "emoji": true
-                },
-                "style": "primary",
-                "value": "assign_help_request_to_me",
-                "action_id": "assign_help_request_to_me"
-            },
-            {
-                "type": "button",
-                "text": {
-                    "type": "plain_text",
-                    "text": ":female-firefighter: Start",
-                    "emoji": true
-                },
-                "style": "primary",
-                "value": "start_help_request",
-                "action_id": "start_help_request"
-            }
+            button(":raising_hand: Take it", "assign_help_request_to_me"),
+            button(":female-firefighter: Start", "start_help_request"),
+            button(":broom: Withdraw", "withdraw_help_request")
         ]
+    }
+}
+
+const button = (text, action) => {
+    return {
+        "type": "button",
+        "text": {
+            "type": "plain_text",
+            "text": text,
+            "emoji": true
+        },
+        "style": "primary",
+        "value": action,
+        "action_id": action
     }
 }
 
@@ -99,6 +94,7 @@ module.exports = {
     title,
     jiraView,
     action,
+    button,
     textField
 }
 

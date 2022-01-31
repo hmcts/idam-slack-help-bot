@@ -12,9 +12,8 @@ const {
     assignHelpRequest,
     extractJiraId,
     extractJiraIdFromBlocks,
-    resolveHelpRequest,
     searchForUnassignedOpenIssues,
-    startHelpRequest,
+    transitionHelpRequest,
 } = require("./src/service/persistence");
 
 const app = new App({
@@ -25,13 +24,14 @@ const app = new App({
 });
 
 const http = require('http');
+const {button} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
 const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
 const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
-const {getActionsElement, updateActionsElement, getSectionField} = require("./src/util/blockHelper");
+const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
 
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
@@ -208,25 +208,16 @@ app.action('resolve_help_request', async ({
         const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
         const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
 
-        await resolveHelpRequest(jiraId, jiraType.endTransitionId) // TODO add optional resolution comment
-        const value = {
-            "type": "button",
-            "text": {
-                "type": "plain_text",
-                "text": ":snow_cloud: Re-open",
-                "emoji": true
-            },
-            "style": "primary",
-            "value": "start_help_request",
-            "action_id": "start_help_request"
-        }
-        updateActionsElement(blocks, /start_help_request|resolve_help_request/, value)
+        await transitionHelpRequest(jiraId, jiraType.endTransitionId) // TODO add optional resolution comment
+
+        updateActionsElement(blocks, /start_help_request|resolve_help_request/,
+            button(":unlock: Re-open", "start_help_request"))
         getSectionField(blocks, 'Status').text = "Status :snowflake:\n Done"
 
         await client.chat.update({
             channel: body.channel.id,
             ts: body.message.ts,
-            text: 'New support request raised',
+            text: 'Help request resolved',
             blocks: blocks
         });
     } catch (error) {
@@ -240,33 +231,58 @@ app.action('start_help_request', async ({
                                         }) => {
     try {
         await ack();
-
         const blocks = body.message.blocks
         const jiraId = extractJiraIdFromBlocks(blocks)
 
         const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
         const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
 
-        await startHelpRequest(jiraId, jiraType.startTransitionId) // TODO add optional resolution comment
+        await transitionHelpRequest(jiraId, jiraType.startTransitionId) // TODO add optional resolution comment
 
-        const value = {
-            "type": "button",
-            "text": {
-                "type": "plain_text",
-                "text": ":snow_cloud: Resolve",
-                "emoji": true
-            },
-            "style": "primary",
-            "value": "resolve_help_request",
-            "action_id": "resolve_help_request"
+        updateActionsElement(blocks, /start_help_request|resolve_help_request/,
+            button(":snow_cloud: Resolve", "resolve_help_request"))
+
+        // Re-add the 'Withdraw' button after the issue has been re-opened
+        if (getActionsElement(blocks, /withdraw_help_request/) === null) {
+            addNewActionsElement(blocks, button(":broom: Withdraw", "withdraw_help_request"))
         }
-        updateActionsElement(blocks, /start_help_request|resolve_help_request/, value)
         getSectionField(blocks, 'Status').text = "Status :fire_extinguisher:\n In progress"
 
         await client.chat.update({
             channel: body.channel.id,
             ts: body.message.ts,
-            text: 'New support request raised',
+            text: 'New help request raised',
+            blocks: blocks
+        });
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+app.action('withdraw_help_request', async ({
+                                              body, action, ack, client, context
+                                          }) => {
+    try {
+        await ack();
+        const blocks = body.message.blocks
+        const jiraId = extractJiraIdFromBlocks(blocks)
+
+        const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
+        const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
+
+        await transitionHelpRequest(jiraId, jiraType.withdrawTransitionId)
+
+        updateActionsElement(blocks, /start_help_request|resolve_help_request/,
+            button(":unlock: Re-open", "start_help_request"))
+
+        // Remove the 'Withdraw' button after the issue has been withdrawn
+        removeActionsElement(blocks, /withdraw_help_request/)
+        getSectionField(blocks, 'Status').text = "Status :zzz:\n Withdrawn"
+
+        await client.chat.update({
+            channel: body.channel.id,
+            ts: body.message.ts,
+            text: 'Help request withdrawn',
             blocks: blocks
         });
     } catch (error) {

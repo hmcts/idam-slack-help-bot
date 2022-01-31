@@ -26,6 +26,27 @@ function updateActionsElement(blocks, actionIdRegex, value) {
     }
 }
 
+function addNewActionsElement(blocks, value) {
+    for (let i = 0; i < blocks.length; i++) {
+        if (blocks[i].type === 'actions') {
+            blocks[i].elements.push(value)
+        }
+    }
+}
+
+function removeActionsElement(blocks, actionIdRegex) {
+    for (let i = 0; i < blocks.length; i++) {
+        if (blocks[i].type === 'actions') {
+            const elements = blocks[i].elements
+            for (let j = 0; j < elements.length; j++) {
+                if (elements[j].action_id.match(actionIdRegex)) {
+                    blocks[i].elements.splice(j, 1);
+                }
+            }
+        }
+    }
+}
+
 function getContextElement(blocks, text) {
     for (let i = 0; i < blocks.length; i++) {
         const block = blocks[i]
@@ -61,6 +82,8 @@ function getSectionField(blocks, text) {
 module.exports = {
     getActionsElement,
     updateActionsElement,
+    addNewActionsElement,
+    removeActionsElement,
     getContextElement,
     getSectionField
 }

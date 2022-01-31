@@ -16,30 +16,17 @@ const jira = new JiraApi({
     strictSSL: true
 });
 
-async function resolveHelpRequest(jiraId, jiraDoneTransitionId) {
+async function transitionHelpRequest(jiraId, jiraTransitionId) {
     try {
         await jira.transitionIssue(jiraId, {
             transition: {
-                id: jiraDoneTransitionId
+                id: jiraTransitionId
             }
         })
     } catch (err) {
-        console.log("Error resolving help request in jira", err)
+        console.log("Error updating help request transition in jira", err)
     }
 }
-
-async function startHelpRequest(jiraId, jiraStartTransitionId) {
-    try {
-        await jira.transitionIssue(jiraId, {
-            transition: {
-                id: jiraStartTransitionId
-            }
-        })
-    } catch (err) {
-        console.log("Error starting help request in jira", err)
-    }
-}
-
 
 async function searchForUnassignedOpenIssues() {
     const jqlQuery = `project = ${jiraProject} AND type = "${JiraType.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
@@ -222,8 +209,7 @@ function checkboxValue(value) {
     return 'N'
 }
 
-module.exports.resolveHelpRequest = resolveHelpRequest
-module.exports.startHelpRequest = startHelpRequest
+module.exports.transitionHelpRequest = transitionHelpRequest
 module.exports.assignHelpRequest = assignHelpRequest
 module.exports.createHelpRequest = createHelpRequest
 module.exports.updateHelpRequestDescription = updateHelpRequestDescription

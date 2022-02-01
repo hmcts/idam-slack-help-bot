@@ -10,6 +10,7 @@ const reportChannel = config.get('slack.report_channel');
 async function handleSupportRequest(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
     const jiraId = await createHelpRequest(helpRequest, userEmail);
+    console.log(`Support request ${jiraId} created in Jira from ${reportChannel}`)
 
     const permaLink = await postSlackMessages(client,
         supportRequestRaised({
@@ -25,42 +26,10 @@ async function handleSupportRequest(client, user, helpRequest) {
     })
 }
 
-function checkConfigPresent(config, output) {
-    if (config !== undefined || config !== null || config !== "" ) {
-        console.log("*****" + output)
-        return true
-    }
-    return false
-}
-
 async function handleBugReport(client, user, helpRequest) {
-    console.log("*****TESTING INPUT PARAMETERS")
-    if (client.token === undefined || client.token === null || !client.token.startsWith("xoxb")) {
-        console.log("*****Invalid channel bot token in Client")
-    } else {
-        console.log("*****Channel token present in Client")
-    }
-
-    console.log("*****Slack user is: " + user)
-
-    console.log("*****TESTING CONFIG SETTINGS")
-    const channelPresent = checkConfigPresent(config.get('slack.report_channel'), "Slack channel config present")
-    if (channelPresent) {
-        console.log("*****Slack channel value: " + config.get('slack.report_channel'))
-    }
-
-    const channelIdPresent = checkConfigPresent(config.get('slack.report_channel_id'), "Slack channel id config present")
-    if (channelIdPresent) {
-        console.log("*****Slack channel id value: " + config.get('slack.report_channel_id'))
-    }
-
-    checkConfigPresent(config.get('secrets.cftptl-intsvc.jira-username'), "Jira username config present")
-    checkConfigPresent(config.get('secrets.cftptl-intsvc.jira-api-token'), "Jira api token config present")
-    checkConfigPresent(config.get('secrets.cftptl-intsvc.idam-slack-bot-token'), "Idam slack bot token config present")
-    checkConfigPresent(config.get('secrets.cftptl-intsvc.idam-slack-app-token'), "Idam slack app token config present")
-
     const userEmail = await getUserEmail(client, user)
     const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.BUG.id)
+    console.log(`Bug ${jiraId} created in Jira from ${reportChannel}`)
 
     const permaLink = await postSlackMessages(client,
         bugRaised({
@@ -79,6 +48,7 @@ async function handleBugReport(client, user, helpRequest) {
 async function handleNewServiceRequest(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
     const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.SERVICE.id)
+    console.log(`New OIDC service request ${jiraId} created in Jira from ${reportChannel}`)
 
     await postSlackMessages(client,
         newServiceRequestRaised({
@@ -92,6 +62,7 @@ async function handleNewServiceRequest(client, user, helpRequest) {
 async function handleNewRoleRequest(client, user, helpRequest) {
     const userEmail = await getUserEmail(client, user)
     const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.ROLE.id)
+    console.log(`New user role request ${jiraId} created in Jira from ${reportChannel}`)
 
     await postSlackMessages(client,
         newRoleRequestRaised({

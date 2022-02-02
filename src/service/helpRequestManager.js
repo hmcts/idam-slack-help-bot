@@ -1,3 +1,4 @@
+const {slackRequestText} = require("../util/helpers");
 const {JiraType} = require("./jiraTicketTypes");
 const {newServiceRequestDetails} = require("../messages");
 
@@ -86,10 +87,9 @@ async function getPermaLink(client, result) {
 }
 
 async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks) {
-    const text = 'New request raised'
     const result = await client.chat.postMessage({
         channel: reportChannel,
-        text: text,
+        text: slackRequestText,
         blocks: requestInfoBlocks
     })
 
@@ -97,7 +97,7 @@ async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks
         await client.chat.postMessage({
             channel: reportChannel,
             thread_ts: result.message.ts,
-            text: text,
+            text: slackRequestText,
             blocks: requestDetailsBlocks
         })
     }

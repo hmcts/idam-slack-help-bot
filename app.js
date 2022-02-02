@@ -24,7 +24,7 @@ const app = new App({
 });
 
 const http = require('http');
-const {button} = require("./src/util/helpers");
+const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
 const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
@@ -400,7 +400,7 @@ app.event('message', async ({event, context, client, say}) => {
                 limit: 200, // after a thread is 200 long we'll break but good enough for now
             })).messages
 
-            if (helpRequestMessages.length > 0 && helpRequestMessages[0].text === 'New support request raised') {
+            if (helpRequestMessages.length > 0 && helpRequestMessages[0].text === slackRequestText) {
                 const jiraId = extractJiraIdFromBlocks(helpRequestMessages[0].blocks)
 
                 const groupRegex = /<!subteam\^.+\|([^>.]+)>/g

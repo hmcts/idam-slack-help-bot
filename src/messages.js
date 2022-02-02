@@ -46,11 +46,11 @@ function supportRequestDetails({
     return [
         {
             "type": "section",
-            "text": textField(`*Description* :spiral_note_pad: \n ${description}`)
+            "text": textField(`*Issue description* :spiral_note_pad: \n ${description}`)
         },
         {
             "type": "section",
-            "text": textField(`*Analysis* :thinking_face: \n ${analysis}`)
+            "text": textField(`*Analysis done so far* :thinking_face: \n ${analysis}`)
         },
         {
             "type": "section",
@@ -108,11 +108,11 @@ function bugDetails({
     return [
         {
             "type": "section",
-            "text": textField(`*Description* :spiral_note_pad: \n ${description}`)
+            "text": textField(`*Issue description* :spiral_note_pad: \n ${description}`)
         },
         {
             "type": "section",
-            "text": textField(`*Analysis* :thinking_face: \n ${analysis}`)
+            "text": textField(`*Analysis done so far* :thinking_face: \n ${analysis}`)
         },
         {
             "type": "section",

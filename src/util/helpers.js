@@ -87,6 +87,8 @@ const textField = (text) => {
     }
 }
 
+const slackRequestText = 'New request raised from Slack'
+
 module.exports = {
     convertIso8601ToEpochSeconds,
     extractSlackLinkFromText,
@@ -95,6 +97,7 @@ module.exports = {
     jiraView,
     action,
     button,
-    textField
+    textField,
+    slackRequestText
 }
 

@@ -130,7 +130,9 @@ async function updateHelpRequestDescription(issueId, fields) {
 
 async function addCommentToHelpRequest(externalSystemId, fields) {
     try {
+        console.log("###Going to add comment in Jira")
         await jira.addComment(externalSystemId, createComment(fields))
+        console.log("###Comment added to Jira")
     } catch (err) {
         console.log("Error creating comment in jira", err)
     }

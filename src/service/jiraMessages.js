@@ -28,6 +28,8 @@ ${shortField('Time issue Occurred', fields.hasOwnProperty('time') ? fields.time 
 
 ${shortField('Impact to user and/or service', fields.hasOwnProperty('impact') ? fields.impact : null)}
 
+${shortField('Affected roles', fields.hasOwnProperty('roles') ? fields.roles : null)}
+
 ${longField('Issue description', fields.hasOwnProperty('description') ? fields.description : null)}
 
 ${longField('Analysis done so far', fields.hasOwnProperty('analysis') ? fields.analysis : null)}

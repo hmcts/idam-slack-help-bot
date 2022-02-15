@@ -25,10 +25,10 @@ function createSupportRequestWorkflowStep() {
                 const helpRequest = {
                     user,
                     summary: inputs.summary.value,
-                    description: inputs.description.value,
-                    analysis: inputs.analysis.value,
+                    description: inputs.description.value || "N/A",
+                    analysis: inputs.analysis.value || "N/A",
                     environment: inputs.environment.value || "N/A",
-                    service: inputs.service.value,
+                    service: inputs.service.value || "N/A",
                     userAffected: inputs.user_affected.value || "N/A",
                     date: inputs.date.value || "N/A",
                     time: inputs.time.value || "N/A",

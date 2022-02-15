@@ -399,7 +399,6 @@ app.event('message', async ({event, context, client, say}) => {
                 limit: 200, // after a thread is 200 long we'll break but good enough for now
             })).messages
 
-            if (helpRequestMessages.length > 0) {
             console.log("***Help request messages length: " + helpRequestMessages.length)
             if (helpRequestMessages.length > 0) {
                 const jiraId = extractJiraIdFromBlocks(helpRequestMessages[0].blocks)

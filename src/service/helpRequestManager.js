@@ -93,6 +93,9 @@ async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks
         blocks: requestInfoBlocks
     })
 
+    console.log("\n$$$Post slack message - result.message.ts: " + result.message.ts)
+    console.log("$$$Post slack message - text: " + slackRequestText)
+
     if (requestDetailsBlocks !== undefined) {
         await client.chat.postMessage({
             channel: reportChannel,

@@ -18,12 +18,12 @@ function supportRequestRaised({
         {
             "type": "section",
             "fields": [
-                textField(`*Issue type* :weight_lifter: \n ${JiraType.ISSUE.requestType}`),
-                textField("*Status* :fire: \n Open"),
-                textField(`*Reporter* :man-surfing: \n <@${user}>`),
-                textField(`*Environment* :house_with_garden: \n ${environment}`),
-                textField(`*Service affected* :service_dog: \n ${service}`),
-                textField(`*User affected* :person_with_probing_cane: \n ${userAffected}`)
+                textField(`*Issue type* \n ${JiraType.ISSUE.requestType}`),
+                textField("*Status* \n Open"),
+                textField(`*Reporter* \n <@${user}>`),
+                textField(`*Environment* \n ${environment}`),
+                textField(`*Service affected* \n ${service}`),
+                textField(`*User affected* \n ${userAffected}`)
             ]
         },
         jiraView(jiraId),
@@ -46,19 +46,19 @@ function supportRequestDetails({
     return [
         {
             "type": "section",
-            "text": textField(`*Issue description* :spiral_note_pad: \n ${description}`)
+            "text": textField(`*Issue description* \n ${description}`)
         },
         {
             "type": "section",
-            "text": textField(`*Analysis done so far* :thinking_face: \n ${analysis}`)
+            "text": textField(`*Analysis done so far* \n ${analysis}`)
         },
         {
             "type": "section",
-            "text": textField(`*Date issue occurred* :date: \n ${date}`)
+            "text": textField(`*Date issue occurred* \n ${date}`)
         },
         {
             "type": "section",
-            "text": textField(`*Time issue occurred* :hourglass: \n ${time}`)
+            "text": textField(`*Time issue occurred* \n ${time}`)
         }
     ]
 }
@@ -69,6 +69,7 @@ function bugRaised({
                        environment,
                        service,
                        impact,
+                       roles,
                        jiraId
 }) {
     return [
@@ -79,12 +80,13 @@ function bugRaised({
         {
             "type": "section",
             "fields": [
-                textField(`*Issue type* :lady_beetle: \n ${JiraType.BUG.requestType}`),
-                textField("*Status* :fire: \n Open"),
-                textField(`*Reporter* :man-surfing: \n <@${user}>`),
-                textField(`*Environment* :house_with_garden: \n ${environment}`),
-                textField(`*Service affected* :service_dog: \n ${service}`),
-                textField(`*Impact to user and/or service* :muscle: \n ${impact}`)
+                textField(`*Issue type* \n ${JiraType.BUG.requestType}`),
+                textField("*Status* \n Open"),
+                textField(`*Reporter* \n <@${user}>`),
+                textField(`*Environment* \n ${environment}`),
+                textField(`*Service affected* \n ${service}`),
+                textField(`*Impact to user and/or service* \n ${impact}`),
+                textField(`*Affected roles* \n ${roles}`),
             ]
         },
         jiraView(jiraId),
@@ -108,23 +110,23 @@ function bugDetails({
     return [
         {
             "type": "section",
-            "text": textField(`*Issue description* :spiral_note_pad: \n ${description}`)
+            "text": textField(`*Issue description* \n ${description}`)
         },
         {
             "type": "section",
-            "text": textField(`*Analysis done so far* :thinking_face: \n ${analysis}`)
+            "text": textField(`*Analysis done so far* \n ${analysis}`)
         },
         {
             "type": "section",
-            "text": textField(`*Steps to reproduce* :ladder: \n ${steps}`)
+            "text": textField(`*Steps to reproduce* \n ${steps}`)
         },
         {
             "type": "section",
-            "text": textField(`*Expected behaviour* :rainbow: \n ${expected}`)
+            "text": textField(`*Expected behaviour* \n ${expected}`)
         },
         {
             "type": "section",
-            "text": textField(`*Actual behaviour* :thunder_cloud_and_rain: \n ${actual}`)
+            "text": textField(`*Actual behaviour* \n ${actual}`)
         }
     ]
 }
@@ -148,15 +150,15 @@ function newServiceRequestRaised({
         {
             "type": "section",
             "fields": [
-                textField(`*Issue type* :service_dog: \n ${JiraType.SERVICE.requestType}`),
-                textField("*Status* :fire: \n Open"),
-                textField(`*Reporter* :man-surfing: \n <@${user}>`),
-                textField(`*Service name* :name_badge: \n ${service}`),
-                textField(`*Service description* :spiral_note_pad: \n ${description}`),
-                textField(`*Service client ID* :id: \n ${client_id}`),
-                textField(`*Service client secret name* :secret: \n ${client_secret}`),
-                textField(`*Service Azure key vault instance* :key: \n ${key_vault}`),
-                textField(`*Service redirect URIs* :hedgehog: \n ${redirect_uri}`)
+                textField(`*Issue type* \n ${JiraType.SERVICE.requestType}`),
+                textField("*Status* \n Open"),
+                textField(`*Reporter* \n <@${user}>`),
+                textField(`*Service name* \n ${service}`),
+                textField(`*Service description* \n ${description}`),
+                textField(`*Service client ID* \n ${client_id}`),
+                textField(`*Service client secret name* \n ${client_secret}`),
+                textField(`*Service Azure key vault instance* \n ${key_vault}`),
+                textField(`*Service redirect URIs* \n ${redirect_uri}`)
             ]
         },
         jiraView(jiraId),
@@ -184,14 +186,14 @@ function newServiceRequestDetails({
         {
             "type": "section",
             "fields": [
-                textField(`*Self-registration enabled?* :selfie: \n ${self_registration}`),
-                textField(`*MFA enabled?* :nesting_dolls: \n ${mfa}`),
-                textField(`*Judicial SSO enabled?* :one: \n ${sso}`),
-                textField(`*Super user or admin user access for managing users required?* :superhero: \n ${admin_management}`),
-                textField(`*Super user email address* :email: \n ${super_user}`),
-                textField(`*User search via API enabled?* :mag: \n ${user_search}`),
-                textField(`*User registration via API enabled?* :registered: \n ${user_registration}`),
-                textField(`*User management via API enabled?* :man_dancing: \n ${user_management}`)
+                textField(`*Self-registration enabled?* \n ${self_registration}`),
+                textField(`*MFA enabled?* \n ${mfa}`),
+                textField(`*Judicial SSO enabled?* \n ${sso}`),
+                textField(`*Super user or admin user access for managing users required?* \n ${admin_management}`),
+                textField(`*Super user email address* \n ${super_user}`),
+                textField(`*User search via API enabled?* \n ${user_search}`),
+                textField(`*User registration via API enabled?* \n ${user_registration}`),
+                textField(`*User management via API enabled?* \n ${user_management}`)
             ]
         }
     ]
@@ -215,14 +217,14 @@ function newRoleRequestRaised({
         {
             "type": "section",
             "fields": [
-                textField(`*Issue type* :bust_in_silhouette: \n ${JiraType.ROLE.requestType}`),
-                textField("*Status* :fire: \n Open"),
-                textField(`*Reporter* :man-surfing: \n <@${user}>`),
-                textField(`*Reporter team* :man-woman-girl-boy: \n ${team}`),
-                textField(`*Role name* :name_badge: \n ${role}`),
-                textField(`*Role description* :spiral_note_pad: \n ${description}`),
-                textField(`*Can CCD admin users manage this role?* :firecracker: \n ${ccd_admin}`),
-                textField(`*Can PRD admin users manage this role?* :balloon: \n ${prd_admin}`)
+                textField(`*Issue type* \n ${JiraType.ROLE.requestType}`),
+                textField("*Status* \n Open"),
+                textField(`*Reporter* \n <@${user}>`),
+                textField(`*Reporter team* \n ${team}`),
+                textField(`*Role name* \n ${role}`),
+                textField(`*Role description* \n ${description}`),
+                textField(`*Can CCD admin users manage this role?* \n ${ccd_admin}`),
+                textField(`*Can PRD admin users manage this role?* \n ${prd_admin}`)
             ]
         },
         jiraView(jiraId),

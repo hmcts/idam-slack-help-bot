@@ -16,16 +16,28 @@ const jira = new JiraApi({
     strictSSL: true
 });
 
-async function transitionHelpRequest(jiraId, jiraTransitionId) {
+async function transitionHelpRequest(jiraId, transitionName) {
     try {
+        const jiraTransitionId = await getTransitionId(transitionName, jiraId)
         await jira.transitionIssue(jiraId, {
             transition: {
                 id: jiraTransitionId
             }
         })
     } catch (err) {
-        console.log("Error updating help request transition in jira", err)
+        console.log("Error updating help request transition in jira. ", err)
     }
+}
+
+async function getTransitionId(transitionName, jiraId) {
+    const response = await jira.listTransitions(jiraId)
+    for (let i = 0; i < response.transitions.length; i++) {
+        const transition = response.transitions[i]
+        if(transition.name === transitionName) {
+            return transition.id;
+        }
+    }
+    throw `Failed to get transition id for status '${transitionName}'`
 }
 
 async function searchForUnassignedOpenIssues() {

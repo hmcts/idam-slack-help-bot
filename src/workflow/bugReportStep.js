@@ -30,6 +30,7 @@ function reportBugWorkflowStep() {
                     environment: inputs.environment.value || "N/A",
                     service: inputs.service.value,
                     impact: inputs.impact.value || "N/A",
+                    roles: inputs.roles.value || "N/A",
                     steps: inputs.steps.value || "N/A",
                     expected: inputs.expected.value || "N/A",
                     actual: inputs.actual.value || "N/A"
@@ -124,6 +125,19 @@ function workflowStepBlocks(inputs) {
         },
         {
             "type": "input",
+            "block_id": "roles",
+            "label": {
+                "type": "plain_text",
+                "text": "Affected roles"
+            },
+            "element": {
+                "type": "plain_text_input",
+                "action_id": "roles",
+                "initial_value": inputs?.roles?.value ?? ""
+            }
+        },
+        {
+            "type": "input",
             "block_id": "steps",
             "label": {
                 "type": "plain_text",
@@ -196,6 +210,9 @@ function workflowStepView(values) {
         },
         impact: {
             value: values.impact.impact.value
+        },
+        roles: {
+            value: values.roles.roles.value
         },
         steps: {
             value: values.steps.steps.value

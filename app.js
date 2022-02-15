@@ -204,15 +204,11 @@ app.action('resolve_help_request', async ({
         await ack();
         const blocks = body.message.blocks
         const jiraId = extractJiraIdFromBlocks(blocks)
-
-        const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
-        const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
-
-        await transitionHelpRequest(jiraId, jiraType.endTransitionId) // TODO add optional resolution comment
+        await transitionHelpRequest(jiraId, "Done")
 
         updateActionsElement(blocks, /start_help_request|resolve_help_request/,
             button(":unlock: Re-open", "start_help_request"))
-        getSectionField(blocks, 'Status').text = "Status :snowflake:\n Done"
+        getSectionField(blocks, 'Status').text = "*Status* \n Done"
 
         await client.chat.update({
             channel: body.channel.id,
@@ -234,10 +230,7 @@ app.action('start_help_request', async ({
         const blocks = body.message.blocks
         const jiraId = extractJiraIdFromBlocks(blocks)
 
-        const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
-        const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
-
-        await transitionHelpRequest(jiraId, jiraType.startTransitionId) // TODO add optional resolution comment
+        await transitionHelpRequest(jiraId, "In Progress")
 
         updateActionsElement(blocks, /start_help_request|resolve_help_request/,
             button(":snow_cloud: Resolve", "resolve_help_request"))
@@ -246,7 +239,7 @@ app.action('start_help_request', async ({
         if (getActionsElement(blocks, /withdraw_help_request/) === null) {
             addNewActionsElement(blocks, button(":broom: Withdraw", "withdraw_help_request"))
         }
-        getSectionField(blocks, 'Status').text = "Status :fire_extinguisher:\n In progress"
+        getSectionField(blocks, 'Status').text = "*Status* \n In progress"
 
         await client.chat.update({
             channel: body.channel.id,
@@ -266,18 +259,14 @@ app.action('withdraw_help_request', async ({
         await ack();
         const blocks = body.message.blocks
         const jiraId = extractJiraIdFromBlocks(blocks)
-
-        const requestType = getSectionField(blocks,"Issue type").text.split("\n").pop().trim()
-        const jiraType = JiraType.getJiraTypeFromRequestType(requestType)
-
-        await transitionHelpRequest(jiraId, jiraType.withdrawTransitionId)
+        await transitionHelpRequest(jiraId, "Withdrawn")
 
         updateActionsElement(blocks, /start_help_request|resolve_help_request/,
             button(":unlock: Re-open", "start_help_request"))
 
         // Remove the 'Withdraw' button after the issue has been withdrawn
         removeActionsElement(blocks, /withdraw_help_request/)
-        getSectionField(blocks, 'Status').text = "Status :zzz:\n Withdrawn"
+        getSectionField(blocks, 'Status').text = "*Status* \n Withdrawn"
 
         await client.chat.update({
             channel: body.channel.id,

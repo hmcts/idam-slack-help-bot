@@ -244,7 +244,7 @@ app.action('start_help_request', async ({
         await client.chat.update({
             channel: body.channel.id,
             ts: body.message.ts,
-            text: 'New help request raised',
+            text: slackRequestText,
             blocks: blocks
         });
     } catch (error) {
@@ -389,7 +389,7 @@ app.event('message', async ({event, context, client, say}) => {
                 limit: 200, // after a thread is 200 long we'll break but good enough for now
             })).messages
 
-            if (helpRequestMessages.length > 0 && helpRequestMessages[0].text === slackRequestText) {
+            if (helpRequestMessages.length > 0) {
                 const jiraId = extractJiraIdFromBlocks(helpRequestMessages[0].blocks)
 
                 const groupRegex = /<!subteam\^.+\|([^>.]+)>/g

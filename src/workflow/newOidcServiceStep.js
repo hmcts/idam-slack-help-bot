@@ -25,7 +25,7 @@ function createNewServiceRequestWorkflowStep() {
                 const helpRequest = {
                     user,
                     summary: inputs.summary.value,
-                    service: inputs.service.value,
+                    service: inputs.service.value || "N/A",
                     description: inputs.description.value || "N/A",
                     client_id: inputs.client_id.value || "N/A",
                     client_secret: inputs.client_secret.value || "N/A",

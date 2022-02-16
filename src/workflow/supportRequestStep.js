@@ -31,7 +31,7 @@ function createSupportRequestWorkflowStep() {
                     service: inputs.service.value || "N/A",
                     userAffected: inputs.user_affected.value || "N/A",
                     date: inputs.date.value || "N/A",
-                    time: inputs.time.value || "N/A",
+                    time: inputs.time.value || "N/A"
                 }
                 await handleSupportRequest(client, user, helpRequest)
             } catch (error) {

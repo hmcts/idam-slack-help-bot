@@ -371,19 +371,11 @@ app.event('message', async ({event, context, client, say}) => {
     try {
         // filter unwanted channels in case someone invites the bot to it
         // and only look at threaded messages
-        console.log("\n\n***Received message from slack")
-        console.log("***Event channel: " + event.channel)
-        console.log("***Report channel ID: " + reportChannelId)
-        console.log("***Event thread: " + event.thread_ts)
-
         if (event.channel === reportChannelId && event.thread_ts) {
-            console.log("***Received message from slack 2")
             const slackLink = (await client.chat.getPermalink({
                 channel: event.channel,
                 'message_ts': event.thread_ts
             })).permalink
-
-            console.log("***Slack link: " + slackLink)
 
             const user = (await client.users.profile.get({
                 user: event.user
@@ -391,26 +383,19 @@ app.event('message', async ({event, context, client, say}) => {
 
             const displayName = user.profile.display_name
 
-            console.log("***Display name: " + displayName)
-
             const helpRequestMessages = (await client.conversations.replies({
                 channel: event.channel,
                 ts: event.thread_ts,
                 limit: 200, // after a thread is 200 long we'll break but good enough for now
             })).messages
 
-            console.log("***Help request messages length: " + helpRequestMessages.length)
             if (helpRequestMessages.length > 0) {
                 const jiraId = extractJiraIdFromBlocks(helpRequestMessages[0].blocks)
-
-                console.log("***Jira ID: " + jiraId)
 
                 const groupRegex = /<!subteam\^.+\|([^>.]+)>/g
                 const usernameRegex = /<@([^>.]+)>/g
 
                 let possibleNewTargetText = event.text.replace(groupRegex, (match, $1) => $1)
-
-                console.log("***Possible new target text: " + possibleNewTargetText)
 
                 const newTargetText = await replaceAsync(possibleNewTargetText, usernameRegex, async (match, $1) => {
                     const user = (await client.users.profile.get({
@@ -419,15 +404,11 @@ app.event('message', async ({event, context, client, say}) => {
                     return `@${user.profile.display_name}`
                 });
 
-                console.log("***New target text: " + newTargetText)
-
                 await addCommentToHelpRequest(jiraId, {
                     slackLink,
                     displayName,
                     message: newTargetText
                 })
-
-                console.log("***Done adding comment")
             } else {
                 // either need to implement pagination or find a better way to get the first message in the thread
                 console.warn("Could not find jira ID, possibly thread is longer than 200 messages, TODO implement pagination");

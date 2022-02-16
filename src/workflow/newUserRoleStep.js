@@ -25,8 +25,8 @@ function createNewRoleRequestWorkflowStep() {
                 const helpRequest = {
                     user,
                     summary: inputs.summary.value,
-                    team: inputs.team.value,
-                    role: inputs.role.value,
+                    team: inputs.team.value || "N/A",
+                    role: inputs.role.value || "N/A",
                     description: inputs.description.value || "N/A",
                     ccd_admin: inputs.ccd_admin.value,
                     prd_admin: inputs.prd_admin.value,

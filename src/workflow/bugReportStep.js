@@ -25,10 +25,10 @@ function reportBugWorkflowStep() {
                 const helpRequest = {
                     user,
                     summary: inputs.summary.value,
-                    description: inputs.description.value || "N/A",
-                    analysis: inputs.analysis.value || "N/A",
+                    description: inputs.description.value,
+                    analysis: inputs.analysis.value,
                     environment: inputs.environment.value || "N/A",
-                    service: inputs.service.value || "N/A",
+                    service: inputs.service.value,
                     impact: inputs.impact.value || "N/A",
                     roles: inputs.roles.value || "N/A",
                     steps: inputs.steps.value || "N/A",

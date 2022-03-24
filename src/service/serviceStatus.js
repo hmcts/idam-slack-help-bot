@@ -1,8 +1,7 @@
-const config = require("config");
 const fetch = require('node-fetch');
 const {Service} = require("./Service");
 
-const refreshDelay = config.get('service-refresh-time');
+const refreshDelay = 15;
 
 const environmentUrls = {
     'AAT': buildNonProdUrl('aat'),

@@ -1,5 +1,4 @@
-const config = require("config");
-const refreshDelay = config.get('service-refresh-time');
+const refreshDelay = 15;
 
 function Service(name) {
     this.name = name;
@@ -17,7 +16,7 @@ Service.prototype.setLastSeen = function (lastSeenTime) {
 
 Service.prototype.toString = function () {
     if(this.isAvailable()) {
-        return `:white_check_mark: *${this.name}* - Responded within the last ${refreshDelay} seconds.`;
+        return `:white_check_mark: *${this.name}* - Responded within the last few seconds.`;
     }
 
     const now = new Date();

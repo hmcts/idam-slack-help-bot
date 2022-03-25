@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch-retry');
 const {Service} = require("./Service");
 
 const refreshDelay = 15;
@@ -45,7 +45,7 @@ function getAllServiceStatus() {
 (async function monitorStatus() {
     for (const [envName, envUrl] of Object.entries(environmentUrls)) {
         try {
-            const response = await fetch(envUrl + '/health');
+            const response = await fetch(envUrl + '/health', { retry: 3, pause: 1500, silent: true });
             const json = await response.json();
 
             if(json.status === 'UP') {
@@ -57,6 +57,7 @@ function getAllServiceStatus() {
             }
 
         } catch (e) {
+            console.log('Failed to connect to ' + envUrl + ' after 3 retries.');
         }
     }
 

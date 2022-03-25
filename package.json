@@ -16,7 +16,8 @@
     "@slack/bolt": "^3.7.0",
     "config": "^3.3.6",
     "jira-client": "^6.23.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "@types/config": "0.0.39",

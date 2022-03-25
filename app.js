@@ -32,6 +32,7 @@ const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
+const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
 
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
@@ -69,6 +70,7 @@ app.step(createSupportRequestStep());
 app.step(reportBugWorkflowStep());
 app.step(createNewServiceRequestWorkflowStep());
 app.step(createNewRoleRequestWorkflowStep());
+app.step(getServiceStatusWorkflowStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()

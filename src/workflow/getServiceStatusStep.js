@@ -72,6 +72,10 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "user",
+            "label": {
+                "type": "plain_text",
+                "text": "Ticket raiser"
+            },
             "element": {
                 "type": "users_select",
                 "action_id": "user",

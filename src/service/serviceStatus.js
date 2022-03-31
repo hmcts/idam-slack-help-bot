@@ -42,27 +42,36 @@ function getAllServiceStatus() {
     return services;
 }
 
-(async function monitorStatus() {
-    for (const [envName, envUrl] of Object.entries(environmentUrls)) {
-        try {
-            const response = await fetch(envUrl + '/health', { retry: 3, pause: 1500, silent: true });
-            const json = await response.json();
+function monitorStatus() {
+    Object.entries(environmentUrls).forEach(([envName, envUrl]) => {
+        const controller = new AbortController();
+        const signal = controller.signal;
 
-            if(json.status === 'UP') {
+        new Promise((resolve, reject) => {
+            fetch(envUrl + '/health', { signal, retry: 3, pause: 1500, silent: true })
+                .then(response => resolve(response.json()))
+                .catch(() => reject);
+            setTimeout(() => {
+                controller.abort();
+                reject();
+            }, refreshDelay * 1000);
+        })
+        .then(data => {
+            if(data.status === 'UP') {
                 services[envName]['idam-web-public'].setLastSeen(Date.now());
             }
 
-            if(json.components.api.status === 'UP') {
+            if(data.components.api.status === 'UP') {
                 services[envName]['idam-api'].setLastSeen(Date.now());
             }
-
-        } catch (e) {
+        })
+        .catch(() => {
             console.log('Failed to connect to ' + envUrl + ' after 3 retries.');
-        }
-    }
+        });
+    });
+}
 
-    setTimeout(monitorStatus, refreshDelay * 1000);
-})();
-
+monitorStatus();
+setInterval(monitorStatus, refreshDelay * 1000)
 
 module.exports.getAllServiceStatus = getAllServiceStatus;

@@ -1,9 +1,8 @@
 const {slackRequestText} = require("../util/helpers");
 const {JiraType} = require("./jiraTicketTypes");
-const {newServiceRequestDetails} = require("../messages");
 
 const {createHelpRequest, updateHelpRequestDescription} = require("./persistence");
-const {supportRequestRaised, supportRequestDetails, bugRaised, bugDetails, newRoleRequestRaised, newServiceRequestRaised} = require("../messages");
+const {supportRequestRaised, supportRequestDetails, bugRaised, bugDetails, newRoleRequestRaised} = require("../messages");
 
 const config = require('@hmcts/properties-volume').addTo(require('config'))
 const reportChannel = config.get('slack.report_channel');
@@ -44,20 +43,6 @@ async function handleBugReport(client, user, helpRequest) {
         ...helpRequest,
         slackLink: permaLink
     })
-}
-
-async function handleNewServiceRequest(client, user, helpRequest) {
-    const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.SERVICE.id)
-    console.log(`New OIDC service request ${jiraId} created in Jira from ${reportChannel}`)
-
-    await postSlackMessages(client,
-        newServiceRequestRaised({
-            ...helpRequest,
-            jiraId
-        }),
-        newServiceRequestDetails(helpRequest)
-    )
 }
 
 async function handleNewRoleRequest(client, user, helpRequest) {
@@ -108,6 +93,5 @@ async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks
 module.exports = {
     handleSupportRequest,
     handleBugReport,
-    handleNewServiceRequest,
     handleNewRoleRequest
 }

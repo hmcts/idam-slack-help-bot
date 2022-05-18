@@ -224,6 +224,25 @@ function unassignedOpenIssue({
         ]
 }
 
+function createOIDCServiceAnnouncement() {
+    return [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*UPDATE 23rd of May 2022*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Service creation is now managed by the <https://github.com/hmcts/idam-access-config|idam-access-config> pipeline. Please refer to the <https://github.com/hmcts/idam-access-config/blob/master/README.md|README> or have a look at how other teams have implemented their services."
+            }
+        },
+    ]
+};
+
 function appHomeUnassignedIssues(openIssueBlocks) {
     return [
         {
@@ -463,5 +482,6 @@ module.exports = {
     bugDetails,
     newRoleRequestRaised,
     openHelpRequestBlocks,
+    createOIDCServiceAnnouncement,
     extractSlackLinkFromText
 }

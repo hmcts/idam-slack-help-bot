@@ -131,74 +131,6 @@ function bugDetails({
     ]
 }
 
-function newServiceRequestRaised({
-                                     user,
-                                     summary,
-                                     service,
-                                     description,
-                                     client_id,
-                                     client_secret,
-                                     key_vault,
-                                     redirect_uri,
-                                     jiraId
-}) {
-    return [
-        title(summary),
-        {
-            "type": "divider"
-        },
-        {
-            "type": "section",
-            "fields": [
-                textField(`*Issue type* \n ${JiraType.SERVICE.requestType}`),
-                textField("*Status* \n Open"),
-                textField(`*Reporter* \n <@${user}>`),
-                textField(`*Service name* \n ${service}`),
-                textField(`*Service description* \n ${description}`),
-                textField(`*Service client ID* \n ${client_id}`),
-                textField(`*Service client secret name* \n ${client_secret}`),
-                textField(`*Service Azure key vault instance* \n ${key_vault}`),
-                textField(`*Service redirect URIs* \n ${redirect_uri}`)
-            ]
-        },
-        jiraView(jiraId),
-        {
-            "type": "divider"
-        },
-        action(),
-        {
-            "type": "divider"
-        }
-    ]
-}
-
-function newServiceRequestDetails({
-                                      self_registration,
-                                      mfa,
-                                      sso,
-                                      admin_management,
-                                      super_user,
-                                      user_search,
-                                      user_registration,
-                                      user_management
-}) {
-    return [
-        {
-            "type": "section",
-            "fields": [
-                textField(`*Self-registration enabled?* \n ${self_registration}`),
-                textField(`*MFA enabled?* \n ${mfa}`),
-                textField(`*Judicial SSO enabled?* \n ${sso}`),
-                textField(`*Super user or admin user access for managing users required?* \n ${admin_management}`),
-                textField(`*Super user email address* \n ${super_user}`),
-                textField(`*User search via API enabled?* \n ${user_search}`),
-                textField(`*User registration via API enabled?* \n ${user_registration}`),
-                textField(`*User management via API enabled?* \n ${user_management}`)
-            ]
-        }
-    ]
-}
-
 function newRoleRequestRaised({
                                   user,
                                   summary,
@@ -291,6 +223,25 @@ function unassignedOpenIssue({
         },
         ]
 }
+
+function createOIDCServiceAnnouncement() {
+    return [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*UPDATE 23rd of May 2022*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Service creation is now managed by the <https://github.com/hmcts/idam-access-config|idam-access-config> pipeline. Please refer to the <https://github.com/hmcts/idam-access-config/blob/master/README.md|README> or have a look at how other teams have implemented their services."
+            }
+        },
+    ]
+};
 
 function appHomeUnassignedIssues(openIssueBlocks) {
     return [
@@ -529,9 +480,8 @@ module.exports = {
     supportRequestDetails,
     bugRaised,
     bugDetails,
-    newServiceRequestRaised,
-    newServiceRequestDetails,
     newRoleRequestRaised,
     openHelpRequestBlocks,
+    createOIDCServiceAnnouncement,
     extractSlackLinkFromText
 }

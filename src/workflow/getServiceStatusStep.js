@@ -1,4 +1,3 @@
-const {handleNewServiceRequest} = require("../service/helpRequestManager");
 const {WorkflowStep} = require("@slack/bolt");
 const {getAllServiceStatus} = require("../service/serviceStatus");
 const config = require("config");

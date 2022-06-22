@@ -383,7 +383,7 @@ app.event('message', async ({event, context, client, say}) => {
                 user: event.user
             }))
 
-            const displayName = user.profile.display_name
+            const displayName = user.profile.display_name_normalized || user.profile.real_name_normalized || user.profile.email
 
             const helpRequestMessages = (await client.conversations.replies({
                 channel: event.channel,
@@ -403,7 +403,9 @@ app.event('message', async ({event, context, client, say}) => {
                     const user = (await client.users.profile.get({
                         user: $1
                     }))
-                    return `@${user.profile.display_name}`
+
+                    const displayName = user.profile.display_name_normalized || user.profile.real_name_normalized || user.profile.email
+                    return `@${displayName}`
                 });
 
                 await addCommentToHelpRequest(jiraId, {

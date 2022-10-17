@@ -3,6 +3,7 @@ const {JiraType} = require("./jiraTicketTypes");
 
 const {createHelpRequest, updateHelpRequestDescription} = require("./persistence");
 const {supportRequestRaised, supportRequestDetails, bugRaised, bugDetails, newRoleRequestRaised} = require("../messages");
+const {supportRequestSuggestions} = require("./suggestions");
 
 const config = require('@hmcts/properties-volume').addTo(require('config'))
 const reportChannel = config.get('slack.report_channel');
@@ -17,7 +18,8 @@ async function handleSupportRequest(client, user, helpRequest) {
             ...helpRequest,
             jiraId
         }),
-        supportRequestDetails(helpRequest)
+        supportRequestDetails(helpRequest),
+        supportRequestSuggestions(helpRequest)
     )
 
     await updateHelpRequestDescription(jiraId, {
@@ -71,7 +73,7 @@ async function getPermaLink(client, result) {
     })).permalink
 }
 
-async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks) {
+async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks, requestSuggestionBlocks) {
     const result = await client.chat.postMessage({
         channel: reportChannel,
         text: slackRequestText,
@@ -84,6 +86,15 @@ async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks
             thread_ts: result.message.ts,
             text: slackRequestText,
             blocks: requestDetailsBlocks
+        })
+    }
+
+    if (requestSuggestionBlocks.length) {
+        await client.chat.postMessage({
+            channel: reportChannel,
+            thread_ts: result.message.ts,
+            text: slackRequestText,
+            blocks: requestSuggestionBlocks
         })
     }
 

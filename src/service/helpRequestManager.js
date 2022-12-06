@@ -47,19 +47,6 @@ async function handleBugReport(client, user, helpRequest) {
     })
 }
 
-async function handleNewRoleRequest(client, user, helpRequest) {
-    const userEmail = await getUserEmail(client, user)
-    const jiraId = await createHelpRequest(helpRequest, userEmail, JiraType.ROLE.id)
-    console.log(`New user role request ${jiraId} created in Jira from ${reportChannel}`)
-
-    await postSlackMessages(client,
-        newRoleRequestRaised({
-            ...helpRequest,
-            jiraId
-        }),
-    )
-}
-
 async function getUserEmail(client, user) {
     return (await client.users.profile.get({
         user
@@ -104,5 +91,4 @@ async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks
 module.exports = {
     handleSupportRequest,
     handleBugReport,
-    handleNewRoleRequest
 }

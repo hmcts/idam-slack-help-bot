@@ -1,5 +1,7 @@
-const {handleNewRoleRequest} = require("../service/helpRequestManager");
 const {WorkflowStep} = require("@slack/bolt");
+const config = require("config");
+const {createNewRoleAnnouncement} = require("../messages");
+const reportChannelId = config.get('slack.report_channel_id');
 
 function createNewRoleRequestWorkflowStep() {
     return new WorkflowStep('new_role_step', {
@@ -18,20 +20,13 @@ function createNewRoleRequestWorkflowStep() {
             await update({ inputs, outputs });
         },
         execute: async ({ step, complete, fail, client }) => {
-            const {inputs} = step;
-            const user = inputs.user.value;
-
             try {
-                const helpRequest = {
-                    user,
-                    summary: inputs.summary.value,
-                    team: inputs.team.value || "N/A",
-                    role: inputs.role.value || "N/A",
-                    description: inputs.description.value || "N/A",
-                    ccd_admin: inputs.ccd_admin.value,
-                    prd_admin: inputs.prd_admin.value,
-                }
-                await handleNewRoleRequest(client, user, helpRequest)
+                await client.chat.postEphemeral({
+                    channel: reportChannelId,
+                    user: step.inputs.user.value,
+                    username: 'IDAM Support',
+                    blocks: createNewRoleAnnouncement()
+                });
             } catch (error) {
                 console.error(error);
             }
@@ -41,84 +36,6 @@ function createNewRoleRequestWorkflowStep() {
 
 function workflowStepBlocks(inputs) {
     return [
-        {
-            "type": "input",
-            "block_id": "summary",
-            "label": {
-                "type": "plain_text",
-                "text": "summary"
-            },
-            "element": {
-                "type": "plain_text_input",
-                "action_id": "title",
-                "initial_value": inputs?.summary?.value ?? ""
-            }
-        },
-        {
-            "type": "input",
-            "block_id": "team",
-            "label": {
-                "type": "plain_text",
-                "text": "Reporter team"
-            },
-            "element": {
-                "type": "plain_text_input",
-                "action_id": "team",
-                "initial_value": inputs?.team?.value ?? ""
-            }
-        },
-        {
-            "type": "input",
-            "block_id": "role",
-            "label": {
-                "type": "plain_text",
-                "text": "Role name"
-            },
-            "element": {
-                "type": "plain_text_input",
-                "action_id": "role",
-                "initial_value": inputs?.role?.value ?? ""
-            }
-        },
-        {
-            "type": "input",
-            "block_id": "description",
-            "label": {
-                "type": "plain_text",
-                "text": "Role description"
-            },
-            "element": {
-                "type": "plain_text_input",
-                "action_id": "description",
-                "initial_value": inputs?.description?.value ?? ""
-            }
-        },
-        {
-            "type": "input",
-            "block_id": "ccd",
-            "label": {
-                "type": "plain_text",
-                "text": "Can CCD admin users manage this role?"
-            },
-            "element": {
-                "type": "plain_text_input",
-                "action_id": "admin",
-                "initial_value": inputs?.ccd_admin?.value ?? ""
-            }
-        },
-        {
-            "type": "input",
-            "block_id": "prd",
-            "label": {
-                "type": "plain_text",
-                "text": "Can PRD admin users manage this role?"
-            },
-            "element": {
-                "type": "plain_text_input",
-                "action_id": "admin",
-                "initial_value": inputs?.prd_admin?.value ?? ""
-            }
-        },
         {
             "type": "input",
             "block_id": "user",
@@ -137,28 +54,10 @@ function workflowStepBlocks(inputs) {
 
 function workflowStepView(values) {
     return {
-        summary: {
-            value: values.summary.title.value
-        },
-        team: {
-            value: values.team.team.value
-        },
-        role: {
-            value: values.role.role.value
-        },
-        description: {
-            value: values.description.description.value
-        },
-        ccd_admin: {
-            value: values.ccd.admin.value
-        },
-        prd_admin: {
-            value: values.prd.admin.value
-        },
         user: {
             value: values.user.user.selected_user
         }
-    };
+    }
 }
 
 module.exports.createNewRoleRequestWorkflowStep = createNewRoleRequestWorkflowStep

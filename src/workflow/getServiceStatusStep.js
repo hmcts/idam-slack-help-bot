@@ -31,7 +31,7 @@ function getServiceStatusWorkflowStep() {
                     }
                 });
 
-                Object.values(services).forEach((service) => {
+                services.forEach(service => {
                     blocks.push({
                         "type": "section",
                         "text": {
@@ -57,7 +57,8 @@ function getServiceStatusWorkflowStep() {
                     channel: reportChannelId,
                     user: step.inputs.user.value,
                     username: 'IDAM Environment',
-                    blocks: blocks
+                    blocks: blocks,
+                    text: 'Service status'
                 });
             } catch (error) {
                 console.error(error);

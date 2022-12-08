@@ -1,13 +1,14 @@
 const refreshDelay = 15;
 
-function Service(name) {
+function Service(name, url) {
     this.name = name;
+    this.url = url;
     this.lastSeen = 0;
 }
 
 Service.prototype.isAvailable = function () {
     const now = Date.now()
-    return (now - this.lastSeen) <= refreshDelay * 1000;
+    return (now - this.lastSeen) <= refreshDelay * 2 * 1000;
 }
 
 Service.prototype.setLastSeen = function (lastSeenTime) {

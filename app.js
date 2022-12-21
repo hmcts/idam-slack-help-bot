@@ -17,9 +17,9 @@ const {
 } = require("./src/service/persistence");
 
 const app = new App({
-    token: config.get('secrets.cftptl-intsvc.idam-slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
+    token: config.get('secrets.cftptl-intsvc.em-slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
     // logLevel: LogLevel.DEBUG,
-    appToken: config.get('secrets.cftptl-intsvc.idam-slack-app-token'),
+    appToken: config.get('secrets.cftptl-intsvc.em-slack-app-token'),
     socketMode: true,
 });
 
@@ -41,7 +41,7 @@ const server = http.createServer((req, res) => {
     if (req.method !== 'GET') {
         res.end(`{"error": "${http.STATUS_CODES[405]}"}`)
     } else if (req.url === '/health') {
-        res.end(`<h1>idam-slack-help-bot</h1>`)
+        res.end(`<h1>em-slack-help-bot</h1>`)
     } else if (req.url === '/health/liveness') {
         if (app.receiver.client.badConnection) {
             res.statusCode = 500
@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
 
         res.end('OK');
     } else if (req.url === '/health/readiness') {
-        res.end(`<h1>idam-slack-help-bot</h1>`)
+        res.end(`<h1>em-slack-help-bot</h1>`)
     } else {
         res.end(`{"error": "${http.STATUS_CODES[404]}"}`)
     }

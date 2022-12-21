@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  idam-slack-help-bot:
+  em-slack-help-bot:
     build: .
     env_file:
       - .env

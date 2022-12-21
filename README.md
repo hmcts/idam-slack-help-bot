@@ -1,4 +1,4 @@
-# IDAM slack help bot
+# EM slack help bot
 
 Based off of https://github.com/hmcts/ccd-slack-help-bot and https://github.com/hmcts/slack-help-bot
 
@@ -12,7 +12,7 @@ Listens for new posts in a designated Slack channel and raises a corresponding i
 
 <img src="images/step1.png" width=50% height=50% />
 
-2. Head to socket mode and enable it. You will then be asked to create a new token (call it **jira-integration**) This will only have **connections:write** in the scope. Select **Generate**. Copy the generated token as this will be required for the idam-slack-help-bot configuration.
+2. Head to socket mode and enable it. You will then be asked to create a new token (call it **jira-integration**) This will only have **connections:write** in the scope. Select **Generate**. Copy the generated token as this will be required for the slack-help-bot configuration.
 
 <img src="images/step2.png" width=50% height=50% />
 
@@ -32,11 +32,11 @@ Listens for new posts in a designated Slack channel and raises a corresponding i
 
 <img src="images/step6.png" width=50% height=50% />
 
-7. Head to **Oauth and Permissions** and install the app to your workspace. Allow the app the default permissions. Copy the generated **Bot User OAuth Access Token** as this will be required for the idam-slack-help-bot configuration. 
+7. Head to **Oauth and Permissions** and install the app to your workspace. Allow the app the default permissions. Copy the generated **Bot User OAuth Access Token** as this will be required for the slack-help-bot configuration. 
 
 <img src="images/step7.png" width=50% height=50% />
 
-8. Invite the app in the channel where you would like it to be used in Slack. Make a note of the **channel ID** as this will later be required in the idam-slack-help-bot configuration. You can get the channel ID by right clicking, 'copy link', and then it will be the bit after archives in the url, e.g. `C01APTJAM7D`.
+8. Invite the app in the channel where you would like it to be used in Slack. Make a note of the **channel ID** as this will later be required in the slack-help-bot configuration. You can get the channel ID by right clicking, 'copy link', and then it will be the bit after archives in the url, e.g. `C01APTJAM7D`.
 
 </details>
 

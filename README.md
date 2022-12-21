@@ -1,4 +1,4 @@
-# EM slack help bot
+# EM slack help bot 
 
 Based off of https://github.com/hmcts/ccd-slack-help-bot and https://github.com/hmcts/slack-help-bot
 

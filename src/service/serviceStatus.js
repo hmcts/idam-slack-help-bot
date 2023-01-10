@@ -34,8 +34,14 @@ function monitorStatus() {
 
             new Promise((resolve, reject) => {
                 fetch(service.url + '/health', { signal, retry: 3, pause: 1500, silent: true })
-                    .then(response => resolve(response.json()))
-                    .catch(() => reject);
+                    .then(response => {
+                        if(response.ok) {
+                            resolve(response.json())
+                        } else {
+                            reject(`${response.status} - ${response.statusText}`)
+                        }
+                    })
+                    .catch(reject);
 
                 setTimeout(() => {
                     controller.abort();
@@ -47,8 +53,8 @@ function monitorStatus() {
                         service.setLastSeen((Date.now()));
                     }
                 })
-                .catch(() => {
-                    console.log('Failed to connect to ' + service.url + ' after 3 retries.');
+                .catch((e) => {
+                    console.log('Failed to connect to ' + service.url + ' after 3 retries - ' + e);
                 });
         })
     })

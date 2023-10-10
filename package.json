@@ -17,7 +17,7 @@
     "config": "^3.3.6",
     "jira-client": "^6.23.0",
     "js-yaml": "^4.1.0",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.0.0",
     "node-fetch-retry": "^2.0.0"
   },
   "devDependencies": {

@@ -381,7 +381,7 @@ function openHelpRequestBlocks() {
                         option('Production'),
                         option('Perftest / Test', 'test'),
                         option('ITHC'),
-                        option('N/A', 'none'),
+                        option('None', 'none'),
                     ],
                     "action_id": "environment"
                 },

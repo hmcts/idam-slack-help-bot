@@ -29,6 +29,8 @@ function getNonProdServices(env) {
 function monitorStatus() {
     Object.entries(services).forEach(([env, services]) => {
         services.forEach(service => {
+            console.log('Getting status of ' + service.url);
+            
             const controller = new AbortController();
             const signal = controller.signal;
 

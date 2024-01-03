@@ -66,7 +66,7 @@ server.listen(port, () => {
     console.log('⚡️ Bolt app started');
 })();
 
-app.step(createSupportRequestStep());
+//app.step(createSupportRequestStep());
 app.step(reportBugWorkflowStep());
 app.step(createNewServiceRequestWorkflowStep());
 app.step(createNewRoleRequestWorkflowStep());

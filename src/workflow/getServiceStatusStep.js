@@ -48,7 +48,7 @@ function getServiceStatusWorkflowStep() {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": `\n>This is up to date as of ${new Date().toLocaleString()} UTC \n`
+                    "text": `\n>This information is up to date as of ${new Date().toLocaleString()} UTC \n`
                 }
             });
 

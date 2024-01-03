@@ -96,6 +96,7 @@ async function reopenAppHome(client, userId) {
 
 // Publish a App Home
 app.event('app_home_opened', async ({event, client}) => {
+    console.log("app_home_opened...");
     await reopenAppHome(client, event.user);
 });
 
@@ -108,6 +109,9 @@ app.shortcut('launch_msg_shortcut', async ({shortcut, body, ack, context, client
 // setup global shortcut in App config with `launch_shortcut` as callback id
 // add `commands` scope
 app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) => {
+
+    console.log("launch_shortcut...");
+
     try {
         // Acknowledge shortcut request
         await ack();
@@ -125,6 +129,10 @@ app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) =
 });
 
 app.view('create_help_request', async ({ack, body, view, client}) => {
+
+
+    console.log("create_help_request...");
+
     // Acknowledge the view_submission event
     await ack();
 

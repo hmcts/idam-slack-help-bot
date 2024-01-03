@@ -6,6 +6,8 @@ function createSupportRequestWorkflowStep() {
         edit: async ({ ack, step, configure, client }) => {
             await ack();
 
+            console.log("createSupportRequestWorkflowStep:edit");
+            
             const blocks = workflowStepBlocks(step.inputs);
             await configure({ blocks });
         },
@@ -42,6 +44,7 @@ function createSupportRequestWorkflowStep() {
 }
 
 function workflowStepBlocks(inputs) {
+    console.log("workflowStepBlocks");
     return [
         {
             "type": "input",

@@ -76,7 +76,7 @@ function workflowStepBlocks(inputs) {
             "block_id": "analysis",
             "label": {
                 "type": "plain_text",
-                "text": "What analysis has already been done?"
+                "text": "What analysis has been done already?"
             },
             "element": {
                 "type": "plain_text_input",

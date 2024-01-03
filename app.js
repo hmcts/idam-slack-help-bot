@@ -66,11 +66,11 @@ server.listen(port, () => {
     console.log('⚡️ Bolt app started');
 })();
 
-//app.step(createSupportRequestStep());
-app.step(reportBugWorkflowStep());
-app.step(createNewServiceRequestWorkflowStep());
-app.step(createNewRoleRequestWorkflowStep());
-app.step(getServiceStatusWorkflowStep());
+// app.step(createSupportRequestStep());
+// app.step(reportBugWorkflowStep());
+// app.step(createNewServiceRequestWorkflowStep());
+// app.step(createNewRoleRequestWorkflowStep());
+// app.step(getServiceStatusWorkflowStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()

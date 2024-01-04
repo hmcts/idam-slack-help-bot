@@ -26,13 +26,13 @@ const app = new App({
 const http = require('http');
 const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
-const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
-const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
-const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
+//const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
+//const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
+//const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
-const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
+//const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
-const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
+//const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
 
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
@@ -66,11 +66,11 @@ server.listen(port, () => {
     console.log('⚡️ Bolt app started');
 })();
 
-//app.step(createSupportRequestStep());
-app.step(reportBugWorkflowStep());
-app.step(createNewServiceRequestWorkflowStep());
-app.step(createNewRoleRequestWorkflowStep());
-app.step(getServiceStatusWorkflowStep());
+// app.step(createSupportRequestStep());
+// app.step(reportBugWorkflowStep());
+// app.step(createNewServiceRequestWorkflowStep());
+// app.step(createNewRoleRequestWorkflowStep());
+// app.step(getServiceStatusWorkflowStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()
@@ -96,6 +96,7 @@ async function reopenAppHome(client, userId) {
 
 // Publish a App Home
 app.event('app_home_opened', async ({event, client}) => {
+    console.log("app_home_opened...");
     await reopenAppHome(client, event.user);
 });
 
@@ -108,6 +109,9 @@ app.shortcut('launch_msg_shortcut', async ({shortcut, body, ack, context, client
 // setup global shortcut in App config with `launch_shortcut` as callback id
 // add `commands` scope
 app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) => {
+
+    console.log("launch_shortcut...");
+
     try {
         // Acknowledge shortcut request
         await ack();
@@ -125,6 +129,10 @@ app.shortcut('launch_shortcut', async ({shortcut, body, ack, context, client}) =
 });
 
 app.view('create_help_request', async ({ack, body, view, client}) => {
+
+
+    console.log("create_help_request...");
+
     // Acknowledge the view_submission event
     await ack();
 

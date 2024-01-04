@@ -26,13 +26,13 @@ const app = new App({
 const http = require('http');
 const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
-//const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
-//const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
-//const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
+const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
+const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
+const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 //const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
-//const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
+const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
 
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
@@ -66,11 +66,11 @@ server.listen(port, () => {
     console.log('⚡️ Bolt app started');
 })();
 
-// app.step(createSupportRequestStep());
-// app.step(reportBugWorkflowStep());
-// app.step(createNewServiceRequestWorkflowStep());
-// app.step(createNewRoleRequestWorkflowStep());
-// app.step(getServiceStatusWorkflowStep());
+//app.step(createSupportRequestStep());
+app.step(reportBugWorkflowStep());
+app.step(createNewServiceRequestWorkflowStep());
+app.step(createNewRoleRequestWorkflowStep());
+app.step(getServiceStatusWorkflowStep());
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()

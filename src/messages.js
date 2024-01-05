@@ -381,7 +381,7 @@ function openHelpRequestBlocks() {
                         option('Production'),
                         option('Perftest / Test', 'test'),
                         option('ITHC'),
-                        option('None', 'none'),
+                        option('N/A', 'none'),
                     ],
                     "action_id": "environment"
                 },
@@ -394,7 +394,6 @@ function openHelpRequestBlocks() {
             {
                 "type": "input",
                 "block_id": "service",
-                "optional": true,
                 "element": {
                     "type": "static_select",
                     "placeholder": {

@@ -30,7 +30,7 @@ const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleSt
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
 const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
-//const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
+const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
 const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
 
@@ -66,7 +66,7 @@ server.listen(port, () => {
     console.log('⚡️ Bolt app started');
 })();
 
-//app.step(createSupportRequestStep());
+app.step(createSupportRequestStep());
 app.step(reportBugWorkflowStep());
 app.step(createNewServiceRequestWorkflowStep());
 app.step(createNewRoleRequestWorkflowStep());

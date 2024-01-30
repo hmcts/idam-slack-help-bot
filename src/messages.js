@@ -330,7 +330,11 @@ function openHelpRequestBlocks() {
                         "text": "Short description of the issue"
                     }
                 },
-                "label": textField("Issue summary")
+                "label": {
+                    "type": "plain_text",
+                    "text": "Issue summary",
+                    "emoji": true
+                }
             },
             {
                 "type": "input",
@@ -376,12 +380,54 @@ function openHelpRequestBlocks() {
                         "emoji": true
                     },
                     "options": [
-                        option('AAT / Staging', 'staging'),
-                        option('Preview / Dev', 'dev'),
-                        option('Production'),
-                        option('Perftest / Test', 'test'),
-                        option('ITHC'),
-                        option('N/A', 'none'),
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "AAT / Staging",
+                                "emoji": true
+                            },
+                            "value": "staging"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Preview / Dev",
+                                "emoji": true
+                            },
+                            "value": "dev"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Production",
+                                "emoji": true
+                            },
+                            "value": "production"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Perftest / Test",
+                                "emoji": true
+                            },
+                            "value": "test"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "ITHC",
+                                "emoji": true
+                            },
+                            "value": "ithc"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "N/A",
+                                "emoji": true
+                            },
+                            "value": "none"
+                        }
                     ],
                     "action_id": "environment"
                 },
@@ -402,39 +448,270 @@ function openHelpRequestBlocks() {
                         "emoji": true
                     },
                     "options": [
-                        option('Access Management', 'am'),
-                        option('Architecture', 'architecture'),
-                        option('Bulk scan', 'bulkscan'),
-                        option('Bulk print', 'bulkprint'),
-                        option('CCD', 'ccd'),
-                        option('Civil Damages', 'civildamages'),
-                        option('Civil Unspecified', 'CivilUnspec'),
-                        option('CMC', 'cmc'),
-                        option('Divorce', 'divorce'),
-                        option('Domestic Abuse', "domesticabuse"),
-                        option('No fault divorce', 'nfdivorce'),
-                        option('Ethos', 'ethos'),
-                        option('Evidence Management', 'evidence'),
-                        option('Expert UI', 'xui'),
-                        option('FaCT', 'fact'),
-                        option('Financial Remedy', 'finrem'),
-                        option('FPLA', 'fpla'),
-                        option('Family Private Law', 'FPRL'),
-                        option('Family Public Law', 'FPL'),
-                        option('Heritage', 'heritage'),
-                        option('HMI', 'hmi'),
-                        option('Management Information', 'mi'),
-                        option('Immigration and Asylum', 'iac'),
-                        option('IDAM', 'idam'),
-                        option('Other', 'other'),
-                        option('Probate', 'probate'),
-                        option('Reference Data', 'refdata'),
-                        option('Reform Software Engineering', 'reform-software-engineering'),
-                        option('Security Operations or Secure design', 'security'),
-                        option('SSCS', 'sscs'),
-                        option('PayBubble', 'paybubble'),
-                        option('PET', 'pet'),
-                        option('Work Allocation', 'workallocation'),
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Access Management",
+                                "emoji": true
+                            },
+                            "value": "am"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Architecture",
+                                "emoji": true
+                            },
+                            "value": "architecture"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Bulk scan",
+                                "emoji": true
+                            },
+                            "value": "bulkscan"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Bulk print",
+                                "emoji": true
+                            },
+                            "value": "bulkprint"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "CCD",
+                                "emoji": true
+                            },
+                            "value": "ccd"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Civil Damages",
+                                "emoji": true
+                            },
+                            "value": "civildamages"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Civil Unspecified",
+                                "emoji": true
+                            },
+                            "value": "CivilUnspec"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "CMC",
+                                "emoji": true
+                            },
+                            "value": "cmc"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Divorce",
+                                "emoji": true
+                            },
+                            "value": "divorce"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Domestic Abuse",
+                                "emoji": true
+                            },
+                            "value": "domesticabuse"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "No fault divorce",
+                                "emoji": true
+                            },
+                            "value": "nfdivorce"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Ethos",
+                                "emoji": true
+                            },
+                            "value": "ethos"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Evidence Management",
+                                "emoji": true
+                            },
+                            "value": "evidence"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Expert UI",
+                                "emoji": true
+                            },
+                            "value": "xui"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "FaCT",
+                                "emoji": true
+                            },
+                            "value": "fact"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Financial Remedy",
+                                "emoji": true
+                            },
+                            "value": "finrem"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "FPLA",
+                                "emoji": true
+                            },
+                            "value": "fpla"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Family Private Law",
+                                "emoji": true
+                            },
+                            "value": "FPRL"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Family Public Law",
+                                "emoji": true
+                            },
+                            "value": "FPL"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Heritage",
+                                "emoji": true
+                            },
+                            "value": "heritage"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "HMI",
+                                "emoji": true
+                            },
+                            "value": "hmi"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Management Information",
+                                "emoji": true
+                            },
+                            "value": "mi"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Immigration and Asylum",
+                                "emoji": true
+                            },
+                            "value": "iac"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "IDAM",
+                                "emoji": true
+                            },
+                            "value": "idam"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Other",
+                                "emoji": true
+                            },
+                            "value": "other"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Probate",
+                                "emoji": true
+                            },
+                            "value": "probate"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Reference Data",
+                                "emoji": true
+                            },
+                            "value": "refdata"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Reform Software Engineering",
+                                "emoji": true
+                            },
+                            "value": "reform-software-engineering"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Security Operations or Secure design",
+                                "emoji": true
+                            },
+                            "value": "security"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "SSCS",
+                                "emoji": true
+                            },
+                            "value": "sscs"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "PayBubble",
+                                "emoji": true
+                            },
+                            "value": "paybubble"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "PET",
+                                "emoji": true
+                            },
+                            "value": "pet"
+                        },
+                        {
+                            "text": {
+                                "type": "plain_text",
+                                "text": "Work Allocation",
+                                "emoji": true
+                            },
+                            "value": "workallocation"
+                        }
                     ],
                     "action_id": "service"
                 },

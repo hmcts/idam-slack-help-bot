@@ -49,6 +49,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "summary",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Issue summary"
@@ -62,6 +63,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "description",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Issue description"
@@ -75,6 +77,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "analysis",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "What analysis has been done so far?"
@@ -88,6 +91,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "environment",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Environment"
@@ -101,6 +105,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "service",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Service affected"
@@ -114,6 +119,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "user_affected",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "User affected"
@@ -127,6 +133,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "date",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Date the issue occurred"
@@ -140,6 +147,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "time",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Time the issue occurred"
@@ -153,6 +161,7 @@ function workflowStepBlocks(inputs) {
         {
             "type": "input",
             "block_id": "user",
+            "optional": true,
             "label": {
                 "type": "plain_text",
                 "text": "Ticket raiser"

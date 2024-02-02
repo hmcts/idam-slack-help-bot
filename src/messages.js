@@ -322,7 +322,6 @@ function openHelpRequestBlocks() {
             {
                 "type": "input",
                 "block_id": "summary",
-                "optional": true,
                 "element": {
                     "type": "plain_text_input",
                     "action_id": "title",
@@ -340,7 +339,6 @@ function openHelpRequestBlocks() {
             {
                 "type": "input",
                 "block_id": "description",
-                "optional": true,
                 "element": {
                     "type": "plain_text_input",
                     "multiline": true,
@@ -359,7 +357,6 @@ function openHelpRequestBlocks() {
             {
                 "type": "input",
                 "block_id": "analysis",
-                "optional": true,
                 "element": {
                     "type": "plain_text_input",
                     "multiline": true,
@@ -374,7 +371,6 @@ function openHelpRequestBlocks() {
             {
                 "type": "input",
                 "block_id": "environment",
-                "optional": true,
                 "element": {
                     "type": "static_select",
                     "placeholder": {
@@ -443,7 +439,6 @@ function openHelpRequestBlocks() {
             {
                 "type": "input",
                 "block_id": "service",
-                "optional": true,
                 "element": {
                     "type": "static_select",
                     "placeholder": {

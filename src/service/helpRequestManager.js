@@ -9,6 +9,13 @@ const config = require('@hmcts/properties-volume').addTo(require('config'))
 const reportChannel = config.get('slack.report_channel');
 
 async function handleSupportRequest(client, user, helpRequest) {
+
+    console.log("handleSupportRequest - client " + client);
+    console.log("handleSupportRequest - user " + user);
+    console.log("handleSupportRequest - helpRequest " + helpRequest);
+    console.log("handleSupportRequest - helpRequest string value " + JSON.stringify(helpRequest));
+    console.log("handleSupportRequest - userEmail " + userEmail);
+
     const userEmail = await getUserEmail(client, user)
     const jiraId = await createHelpRequest(helpRequest, userEmail);
     console.log(`Support request ${jiraId} created in Jira from ${reportChannel}`)

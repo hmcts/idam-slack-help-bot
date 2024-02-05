@@ -4,6 +4,7 @@ const {
     appHomeUnassignedIssues,
     extractSlackLinkFromText,
     openHelpRequestBlocks,
+    openBugRequestBlocks,
     unassignedOpenIssue,
 } = require('./src/messages');
 const {App, LogLevel, SocketModeReceiver} = require('@slack/bolt');
@@ -31,6 +32,7 @@ const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcSer
 const {createNewSupportRequestWorkflowStep} = require("./src/workflow/newSupportRequestStep");
 const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");  
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
+const {handleBugReport} = require("./src/service/helpRequestManager");
 const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
 const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
@@ -154,6 +156,53 @@ app.view('create_help_request', async ({ack, body, view, client}) => {
             time: view.state.values.time.time.value || "N/A",
         }
         await handleSupportRequest(client, user, helpRequest)
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+app.shortcut('idam_bug_shortcut', async ({shortcut, body, ack, context, client}) => {
+
+    try {
+        // Acknowledge shortcut request
+        await ack();
+
+        // Un-comment if you want the JSON for block-kit builder (https://app.slack.com/block-kit-builder/T1L0WSW9F)
+        // console.log(JSON.stringify(openHelpRequestBlocks().blocks))
+
+        await client.views.open({
+            trigger_id: shortcut.trigger_id,
+            view: openBugRequestBlocks()
+        });
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+app.view('create_bug_request', async ({ack, body, view, client}) => {
+
+    // Acknowledge the view_submission event
+    await ack();
+
+    const user = body.user.id;
+
+    // Message the user
+    try {
+        const helpRequest = {
+            user,
+            summary: view.state.values.summary.title.value,
+            description: view.state.values.description.description.value,
+            analysis: view.state.values.analysis.analysis.value,
+            environment: view.state.values.environment.environment.selected_option?.text.text || "N/A",
+            service: view.state.values.service.service.selected_option?.text.text,
+            impact: view.state.values.impact.impact.value,
+            roles: view.state.values.roles.roles.value,
+            steps: view.state.values.steps.steps.value,
+            expected: view.state.values.expected.expected.value,
+            actual: view.state.values.actual.actual.value,
+            userAffected: view.state.values.user.user.value || "N/A"
+        }
+        await handleBugReport(client, user, helpRequest)
     } catch (error) {
         console.error(error);
     }

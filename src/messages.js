@@ -243,6 +243,25 @@ function createOIDCServiceAnnouncement() {
     ]
 }
 
+function createSupportRequestAnnouncement() {
+    return [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*UPDATE 5th of Feb 2024*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Please raise IDAM Support Request using /help shortcut in any slack window. Please choose CFT IDAM Support shortcut from avilable options."
+            }
+        },
+    ]
+}
+
 function createNewRoleAnnouncement() {
     return [
         {
@@ -779,5 +798,6 @@ module.exports = {
     openHelpRequestBlocks,
     createOIDCServiceAnnouncement,
     createNewRoleAnnouncement,
-    extractSlackLinkFromText
+    extractSlackLinkFromText,
+    createSupportRequestAnnouncement
 }

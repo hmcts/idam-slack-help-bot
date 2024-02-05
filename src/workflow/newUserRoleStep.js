@@ -3,8 +3,8 @@ const config = require("config");
 const {createNewRoleAnnouncement} = require("../messages");
 const reportChannelId = config.get('slack.report_channel_id');
 
-function createNewRoleRequestWorkflowStep() {
-    return new WorkflowStep('new_role_step', {
+function createNewRoleAnnouncementWorkflowStep() {
+    return new WorkflowStep('new_user_role_step', {
         edit: async ({ ack, step, configure, client }) => {
             await ack();
 
@@ -60,4 +60,4 @@ function workflowStepView(values) {
     }
 }
 
-module.exports.createNewRoleRequestWorkflowStep = createNewRoleRequestWorkflowStep
+module.exports.createNewRoleAnnouncementWorkflowStep = createNewRoleAnnouncementWorkflowStep

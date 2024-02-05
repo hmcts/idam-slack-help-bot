@@ -28,7 +28,8 @@ const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
 const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
-const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");
+const {createNewSupportRequestWorkflowStep} = require("./src/workflow/newSupportRequestStep");
+const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");  
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
@@ -69,6 +70,7 @@ server.listen(port, () => {
 app.step(createSupportRequestStep());
 app.step(reportBugWorkflowStep());
 app.step(createNewServiceRequestWorkflowStep());
+app.step(createNewSupportRequestWorkflowStep());
 app.step(createNewRoleRequestWorkflowStep());
 app.step(getServiceStatusWorkflowStep());
 

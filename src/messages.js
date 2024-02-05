@@ -256,7 +256,26 @@ function createSupportRequestAnnouncement() {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Please raise IDAM Support Request using /help shortcut in any slack window. Please choose CFT IDAM Support shortcut from available options."
+                "text": "Please raise IDAM Support Request using /help shortcut in any slack window. Please choose Help IDAM SupportRequest - CFT IDAM Support shortcut from available options."
+            }
+        },
+    ]
+}
+
+function createReportIdamBugAnnouncement() {
+    return [
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "*UPDATE 5th of Feb 2024*"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "Please raise IDAM bug using /help shortcut in any slack window. Please choose Help Report IDAM bug - CFT IDAM Support shortcut from available options."
             }
         },
     ]
@@ -1325,5 +1344,6 @@ module.exports = {
     createNewRoleAnnouncement,
     extractSlackLinkFromText,
     createSupportRequestAnnouncement,
-    openBugRequestBlocks
+    openBugRequestBlocks,
+    createReportIdamBugAnnouncement
 }

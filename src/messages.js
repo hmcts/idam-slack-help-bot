@@ -282,22 +282,40 @@ function createReportIdamBugAnnouncement() {
 }
 
 function createNewRoleAnnouncement() {
+
     return [
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*UPDATE 6th December 2022*"
+                "text": "*UPDATE 5th of Feb 2024*"
             }
         },
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "Role creation is now managed by the <https://github.com/hmcts/idam-access-config|idam-access-config> pipeline. Please refer to the <https://github.com/hmcts/idam-access-config/blob/master/README.md#roles-model|README> or have a look at how other teams have added their roles."
+                "text": "Role creation is now managed by the pipeline."
             }
         },
     ]
+
+    // return [
+    //     {
+    //         "type": "section",
+    //         "text": {
+    //             "type": "mrkdwn",
+    //             "text": "*UPDATE 6th December 2022*"
+    //         }
+    //     },
+    //     {
+    //         "type": "section",
+    //         "text": {
+    //             "type": "mrkdwn",
+    //             "text": "Role creation is now managed by the <https://github.com/hmcts/idam-access-config|idam-access-config> pipeline. Please refer to the <https://github.com/hmcts/idam-access-config/blob/master/README.md#roles-model|README> or have a look at how other teams have added their roles."
+    //         }
+    //     },
+    // ]
 }
 
 function appHomeUnassignedIssues(openIssueBlocks) {

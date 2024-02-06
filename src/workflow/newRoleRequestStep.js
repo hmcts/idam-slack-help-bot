@@ -1,10 +1,10 @@
 const {WorkflowStep} = require("@slack/bolt");
 const config = require("config");
-const {createNewRoleAnnouncement} = require("../messages");
+const {createRoleAnnouncementInfo} = require("../messages");
 const reportChannelId = config.get('slack.report_channel_id');
 
-function createNewRoleAnnouncementWorkflowStep() {
-    return new WorkflowStep('new_user_role_step', {
+function createNewUserRoleRequestWorkflowStep() {
+    return new WorkflowStep('new_user_role_service_step', {
         edit: async ({ ack, step, configure, client }) => {
             await ack();
 
@@ -25,7 +25,7 @@ function createNewRoleAnnouncementWorkflowStep() {
                     channel: reportChannelId,
                     user: step.inputs.user.value,
                     username: 'IDAM Support',
-                    blocks: createNewRoleAnnouncement()
+                    blocks: createRoleAnnouncementInfo()
                 });
             } catch (error) {
                 console.error(error);
@@ -60,4 +60,4 @@ function workflowStepView(values) {
     }
 }
 
-module.exports.createNewRoleAnnouncementWorkflowStep = createNewRoleAnnouncementWorkflowStep
+module.exports.createNewUserRoleRequestWorkflowStep = createNewUserRoleRequestWorkflowStep

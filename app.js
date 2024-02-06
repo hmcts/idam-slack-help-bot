@@ -27,7 +27,7 @@ const app = new App({
 const http = require('http');
 const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
-const {createNewRoleAnnouncementWorkflowStep} = require("./src/workflow/newUserRoleStep");
+const {createNewUserRoleRequestWorkflowStep} = require("./src/workflow/newRoleRequestStep");
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
 const {createNewSupportRequestWorkflowStep} = require("./src/workflow/newSupportRequestStep");
 const {createNewReportIdamBugWorkflowStep} = require("./src/workflow/newBugReportStep");
@@ -75,8 +75,9 @@ app.step(reportBugWorkflowStep());
 app.step(createNewServiceRequestWorkflowStep());
 app.step(createNewReportIdamBugWorkflowStep());
 app.step(createNewSupportRequestWorkflowStep());
-app.step(createNewRoleAnnouncementWorkflowStep());
 app.step(getServiceStatusWorkflowStep());
+app.step(createNewUserRoleRequestWorkflowStep());
+
 
 async function reopenAppHome(client, userId) {
     const results = await searchForUnassignedOpenIssues()

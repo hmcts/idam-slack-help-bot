@@ -27,9 +27,10 @@ const app = new App({
 const http = require('http');
 const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
-const {createNewRoleRequestWorkflowStep} = require("./src/workflow/newUserRoleStep");
+const {createNewRoleAnnouncementWorkflowStep} = require("./src/workflow/newUserRoleStep");
 const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
 const {createNewSupportRequestWorkflowStep} = require("./src/workflow/newSupportRequestStep");
+const {createNewReportIdamBugWorkflowStep} = require("./src/workflow/newBugReportStep");
 const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");  
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {handleBugReport} = require("./src/service/helpRequestManager");
@@ -72,8 +73,9 @@ server.listen(port, () => {
 app.step(createSupportRequestStep());
 app.step(reportBugWorkflowStep());
 app.step(createNewServiceRequestWorkflowStep());
+app.step(createNewReportIdamBugWorkflowStep());
 app.step(createNewSupportRequestWorkflowStep());
-app.step(createNewRoleRequestWorkflowStep());
+app.step(createNewRoleAnnouncementWorkflowStep());
 app.step(getServiceStatusWorkflowStep());
 
 async function reopenAppHome(client, userId) {

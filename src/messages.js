@@ -281,13 +281,14 @@ function createReportIdamBugAnnouncement() {
     ]
 }
 
-function createNewRoleAnnouncement() {
+function createRoleAnnouncementInfo() {
+
     return [
         {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "*UPDATE 6th December 2022*"
+                "text": "*UPDATE 5th of Feb 2024*"
             }
         },
         {
@@ -1341,7 +1342,7 @@ module.exports = {
     newRoleRequestRaised,
     openHelpRequestBlocks,
     createOIDCServiceAnnouncement,
-    createNewRoleAnnouncement,
+    createRoleAnnouncementInfo,
     extractSlackLinkFromText,
     createSupportRequestAnnouncement,
     openBugRequestBlocks,

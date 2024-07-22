@@ -22,7 +22,8 @@ function getNonProdServices(env) {
     return [
         new Service('idam-api', `https://idam-api.${env}.platform.hmcts.net`),
         new Service('idam-web-public', `https://idam-web-public.${env}.platform.hmcts.net`),
-        new Service('idam-user-dashboard', `https://idam-user-dashboard.${env}.platform.hmcts.net`)
+        new Service('idam-user-dashboard', `https://idam-user-dashboard.${env}.platform.hmcts.net`),
+        new Service('idam-hmcts-access', `https://idam-hmcts-access.${env}.platform.hmcts.net`)
     ]
 }
 

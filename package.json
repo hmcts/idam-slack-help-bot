@@ -24,7 +24,7 @@
     "@types/config": "3.3.5",
     "@types/jira-client": "^7.0.0",
     "jest": "^30.0.0",
-    "jest-extended": "^6.0.0",
+    "jest-extended": "^7.0.0",
     "nodemon": "^3.0.0"
   },
   "jest": {

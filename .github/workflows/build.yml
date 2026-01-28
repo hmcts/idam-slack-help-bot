@@ -11,6 +11,11 @@ name: Publish
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    env:
+      AZURE_CONTAINER_REGISTRY_URL: hmctspublic.azurecr.io
+      NEW_AZURE_CONTAINER_REGISTRY_URL: hmctsprod.azurecr.io
     steps:
       - uses: actions/checkout@v6
 
@@ -20,6 +25,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           registry-url: https://registry.npmjs.org/ # Needed for auth
+
       - name: Cache npm dependencies
         uses: actions/cache@v5
         with:
@@ -27,9 +33,17 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+
       - name: npm install
         run: npm install
       # End of  setup
+
+      - name: "Az CLI login"
+        uses: azure/login@v2
+        with:
+          client-id: 456b556e-158c-426b-9b5b-ce6ebb32c6a1 # DTS Developers GitHub Actions ACR Publisher 2
+          tenant-id: 531ff96d-0ae9-462a-8d2d-bec7c0b42082 # HMCTS.NET
+          allow-no-subscriptions: true
 
       - id: get-short-sha
         uses: actions/github-script@v7.1.0
@@ -38,17 +52,43 @@ jobs:
             const shortSha = context.sha.substring(0, 7)
             core.setOutput('shortSha', shortSha)
 
-      - name: 'Build and push image'
+      ###################################################
+      # HMCTSPROD ACR
+      ###################################################
+      - name: "ACR Login - hmctsprod"
+        run: |
+          az acr login --name hmctsprod
+
+      - name: "Build and Push PR image - hmctsprod"
+        if: startsWith(github.ref, 'refs/pull')
+        run: |
+          docker build . -t ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
+          docker push ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
+
+      - name: "Build and push prod image - hmctsprod"
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker build . -t ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
+          docker push ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
+
+      ###################################################
+      # HMCTSPUBLIC ACR - Push
+      ###################################################
+      - name: "ACR Login - hmctspublic"
         uses: azure/docker-login@v2
         with:
-          login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+          login-server: ${{ env.AZURE_CONTAINER_REGISTRY_URL }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
-      - run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
+
+      - name: "Build and Push PR image - hmctspublic"
         if: startsWith(github.ref, 'refs/pull')
-      - run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
-        if: github.ref == 'refs/heads/master'
+        run: |
+          docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
+
+      - name: "Build and push prod image - hmctspublic"
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
+          docker push ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}

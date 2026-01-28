@@ -66,7 +66,7 @@ jobs:
           docker push ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
 
       - name: "Build and push prod image - hmctsprod"
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: |
           docker build . -t ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
           docker push ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
@@ -88,7 +88,7 @@ jobs:
           docker push ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
 
       - name: "Build and push prod image - hmctspublic"
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         run: |
           docker build . -t ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
           docker push ${{ env.AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}

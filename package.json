@@ -21,7 +21,7 @@
     "node-fetch-retry": "^2.0.0"
   },
   "devDependencies": {
-    "@types/config": "3.3.5",
+    "@types/config": "4.4.0",
     "@types/jira-client": "^7.0.0",
     "jest": "^30.0.0",
     "jest-extended": "^7.0.0",

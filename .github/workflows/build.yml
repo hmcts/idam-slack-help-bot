@@ -46,7 +46,7 @@ jobs:
           allow-no-subscriptions: true
 
       - id: get-short-sha
-        uses: actions/github-script@v7.1.0
+        uses: actions/github-script@v9.0.0
         with:
           script: |
             const shortSha = context.sha.substring(0, 7)

@@ -12,7 +12,7 @@
   "author": "IDAM",
   "license": "MIT",
   "dependencies": {
-    "@hmcts/properties-volume": "1.4.0",
+    "@hmcts/properties-volume": "1.4.1",
     "@slack/bolt": "^5.0.0",
     "config": "^4.0.0",
     "jira-client": "^8.0.0",

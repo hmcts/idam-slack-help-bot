@@ -7,14 +7,14 @@
     "start": "node app.js",
     "start:dev": "set -o allexport; source .env; set +o allexport && node app.js",
     "watch": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand --testPathIgnorePatterns=persistence.functional.test.js"
   },
   "author": "IDAM",
   "license": "MIT",
   "dependencies": {
     "@hmcts/properties-volume": "1.4.1",
-    "@slack/bolt": "^5.0.0",
-    "config": "^5.0.0",
+    "@slack/bolt": "4.4.0",
+    "config": "4.4.2",
     "jira-client": "^8.0.0",
     "js-yaml": "^5.0.0",
     "node-fetch": "^3.0.0",

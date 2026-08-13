@@ -36,6 +36,9 @@ jobs:
 
       - name: npm install
         run: npm install
+
+      - name: Test
+        run: npm test
       # End of  setup
 
       - name: "Az CLI login"

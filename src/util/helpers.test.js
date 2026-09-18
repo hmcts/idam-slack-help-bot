@@ -22,4 +22,40 @@ describe('extractSlackLinkFromText', () => {
         expect(extractSlackLinkFromText("h6. _This is an automatically generated ticket created from Slack, do not reply or update in here, [view in Slack|https://platformengin-tzf2541.slack.com/archives/C01KHKNJUKE/p1611568116006500]_"))
             .toBe('https://platformengin-tzf2541.slack.com/archives/C01KHKNJUKE/p1611568116006500')
     })
+    it('returns a Slack message link from an ADF description', () => {
+        const description = {
+            type: 'doc',
+            version: 1,
+            content: [{
+                type: 'paragraph',
+                content: [{
+                    type: 'text',
+                    text: 'view in Slack',
+                    marks: [{
+                        type: 'link',
+                        attrs: {href: 'https://platformengin-tzf2541.slack.com/archives/C01KHKNJUKE/p1611568116006500'}
+                    }]
+                }]
+            }]
+        }
+
+        expect(extractSlackLinkFromText(description))
+            .toBe('https://platformengin-tzf2541.slack.com/archives/C01KHKNJUKE/p1611568116006500')
+    })
+    it('ignores non-Slack links in an ADF description', () => {
+        const description = {
+            type: 'doc',
+            version: 1,
+            content: [{
+                type: 'paragraph',
+                content: [{
+                    type: 'text',
+                    text: 'view elsewhere',
+                    marks: [{type: 'link', attrs: {href: 'https://example.com'}}]
+                }]
+            }]
+        }
+
+        expect(extractSlackLinkFromText(description)).toBe(undefined)
+    })
 })

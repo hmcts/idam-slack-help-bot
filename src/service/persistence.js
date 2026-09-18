@@ -4,15 +4,43 @@ const {getContextElement} = require("../util/blockHelper");
 const {createComment, mapFieldsToDescription} = require("./jiraMessages");
 const {JiraType} = require('./jiraTicketTypes');
 
-const systemUser = config.get('secrets.cftptl-intsvc.jira-username')
 const jiraProject = config.get('jira.project')
 const extractProjectRegex = new RegExp(`(${jiraProject}-[\\d]+)`)
 
+const jiraCloudId = config.get('secrets.cftptl-intsvc.jira-cloud-id');
+let systemAccountId;
+let systemAccountIdPromise;
+
+async function getSystemAccountId() {
+    if (systemAccountId) return systemAccountId;
+
+    if (!systemAccountIdPromise) {
+        systemAccountIdPromise = jira.getCurrentUser()
+            .then((user) => {
+                if (!user?.accountId) {
+                    throw new Error("Jira service account has no accountId");
+                }
+
+                systemAccountId = user.accountId;
+                return systemAccountId;
+            })
+            .catch((err) => {
+                systemAccountIdPromise = undefined;
+                console.error("Unable to resolve Jira service account ID", err);
+                throw err;
+            });
+    }
+
+    return systemAccountIdPromise;
+}
+
 const jira = new JiraApi({
     protocol: 'https',
-    host: 'tools.hmcts.net/jira',
-    bearer: config.get('secrets.cftptl-intsvc.jira-api-token'),
-    apiVersion: '2',
+    host: 'api.atlassian.com',
+    base: `/ex/jira/${jiraCloudId}`,
+    username: config.get('secrets.cftptl-intsvc.jira-username'),
+    password: config.get('secrets.cftptl-intsvc.jira-api-token'),
+    apiVersion: '3',
     strictSSL: true
 });
 
@@ -43,13 +71,19 @@ async function getTransitionId(transitionName, jiraId) {
 async function searchForUnassignedOpenIssues() {
     const jqlQuery = `project = ${jiraProject} AND type = "${JiraType.ISSUE.name}" AND status = Open and assignee is EMPTY AND labels not in ("Heritage") ORDER BY created ASC`;
     try {
-        return await jira.searchJira(
-            jqlQuery,
-            {
-                // TODO if we moved the slack link out to another field we wouldn't need to request the whole description
-                // which would probably be better for performance
-                fields: ['created', 'description', 'summary', 'updated']
-            }
+        return await jira.doRequest(
+            jira.makeRequestHeader(
+                jira.makeUri({pathname: '/search/jql'}),
+                {
+                    method: 'POST',
+                    followAllRedirects: true,
+                    body: {
+                        jql: jqlQuery,
+                        // TODO Moving the Slack link to its own field would avoid fetching the full description.
+                        fields: ['created', 'description', 'summary', 'updated']
+                    }
+                }
+            )
         )
     } catch (err) {
         console.log("Error searching for issues in jira", err)
@@ -60,19 +94,19 @@ async function searchForUnassignedOpenIssues() {
 }
 
 async function assignHelpRequest(issueId, email) {
-    const user = convertEmail(email)
+    const accountId = await convertEmail(email);
 
     try {
-        await jira.updateAssignee(issueId, user)
-    } catch(err) {
-        console.log("Error assigning help request in jira", err)
+        await jira.updateAssigneeWithId(issueId, accountId);
+    } catch (err) {
+        console.log("Error assigning help request in Jira", err);
     }
 }
 
 /**
  * Extracts a jira ID
  *
- * expected format: 'View on Jira: <https://tools.hmcts.net/jira/browse/SBOX-61|SBOX-61>'
+ * expected format: 'View on Jira: <https://hmcts.atlassian.net/browse/SBOX-61|SBOX-61>'
  * @param blocks
  */
 function extractJiraIdFromBlocks(blocks) {
@@ -84,12 +118,27 @@ function extractJiraId(text) {
     return extractProjectRegex.exec(text)[1]
 }
 
-function convertEmail(email) {
+async function convertEmail(email) {
     if (!email) {
-        return systemUser
+        return getSystemAccountId();
     }
 
-    return email.split('@')[0]
+    try {
+        const users = await jira.searchUsers({
+            query: email,
+            maxResults: 1
+        });
+
+        if (!users?.[0]?.accountId) {
+            console.log('Jira user not found; using service account as reporter');
+            return getSystemAccountId();
+        }
+
+        return users[0].accountId;
+    } catch (err) {
+        console.log('Jira user lookup failed; using service account as reporter', err);
+        return getSystemAccountId();
+    }
 }
 
 async function createHelpRequestInJira(helpRequest, project, user, issueType = JiraType.ISSUE.id) {
@@ -97,20 +146,18 @@ async function createHelpRequestInJira(helpRequest, project, user, issueType = J
 }
 
 async function createHelpRequest(helpRequest, userEmail, issueType = JiraType.ISSUE.id) {
-    const user = convertEmail(userEmail)
-    const project = await jira.getProject(jiraProject)
+    const userAccountId = await convertEmail(userEmail);
+    const project = await jira.getProject(jiraProject);
 
-    // https://developer.atlassian.com/cloud/jira/platform/rest/v2/api-group-issues/#api-rest-api-2-issue-post
-    // note: fields don't match 100%, our Jira version is a bit old (still a supported LTS though)
-    let result
-    try {
-        result = await createHelpRequestInJira(helpRequest, project, user, issueType);
-    } catch (err) {
-        // in case the user doesn't exist in Jira use the system user
-        result = await createHelpRequestInJira(helpRequest, project, systemUser, issueType);
-    }
+    const result = await createHelpRequestInJira(
+        helpRequest,
+        project,
+        userAccountId,
+        issueType
+    );
 
-    return result.key
+    await transitionHelpRequest(result.key, 'Ready for Dev');
+    return result.key;
 }
 
 async function updateHelpRequestDescription(issueId, fields) {
@@ -153,7 +200,7 @@ function constructJiraIssue(helpRequest, project, user, issueType) {
     }
 }
 
-function defaultJiraIssueFields(summary, project, user, issueType) {
+function defaultJiraIssueFields(summary, project, accountId, issueType) {
     return {
         summary: summary,
         issuetype: {
@@ -165,7 +212,7 @@ function defaultJiraIssueFields(summary, project, user, issueType) {
         labels: ['created-from-slack'],
         description: undefined,
         reporter: {
-            name: user // API docs say ID, but our jira version doesn't have that field yet, may need to change in future
+            accountId
         },
         customfield_10008: 'SIDM-6950'
     }

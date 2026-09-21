@@ -214,7 +214,9 @@ function defaultJiraIssueFields(summary, project, accountId, issueType) {
         reporter: {
             accountId
         },
-        customfield_10008: 'SIDM-6950'
+        parent: {
+            key: 'SIDM-6950'
+        }
     }
 }
 

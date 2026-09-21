@@ -106,10 +106,14 @@ describe('createHelpRequest', () => {
             'reporter@hmcts.net'
         )).resolves.toBe('SBOX-123')
 
-        expect(mockJiraClient.addNewIssue).toHaveBeenCalledWith(expect.objectContaining({
+        const issue = mockJiraClient.addNewIssue.mock.calls[0][0]
+
+        expect(issue).toEqual(expect.objectContaining({
             fields: expect.objectContaining({
-                reporter: {accountId: 'reporter-account-id'}
+                reporter: {accountId: 'reporter-account-id'},
+                parent: {key: 'SIDM-6950'}
             })
         }))
+        expect(issue.fields).not.toHaveProperty('customfield_10008')
     })
 })

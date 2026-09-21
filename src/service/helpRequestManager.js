@@ -68,7 +68,7 @@ async function getPermaLink(client, result) {
     })).permalink
 }
 
-async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks, requestSuggestionBlocks) {
+async function postSlackMessages(client, requestInfoBlocks, requestDetailsBlocks, requestSuggestionBlocks = []) {
     const result = await client.chat.postMessage({
         channel: reportChannel,
         text: slackRequestText,

@@ -1,5 +1,5 @@
 const {Readable} = require('stream')
-const {downloadSlackFile} = require('./slackFiles')
+const {downloadSlackFile} = require('../../src/service/slackFiles')
 const originalFetch = global.fetch
 
 describe('downloadSlackFile', () => {

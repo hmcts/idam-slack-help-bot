@@ -2,16 +2,16 @@ const mockAddAttachmentToHelpRequest = jest.fn()
 const mockAddCommentToHelpRequest = jest.fn()
 const mockDownloadSlackFile = jest.fn()
 
-jest.mock('./persistence', () => ({
+jest.mock('../../src/service/persistence', () => ({
     addAttachmentToHelpRequest: mockAddAttachmentToHelpRequest,
     addCommentToHelpRequest: mockAddCommentToHelpRequest
 }))
 
-jest.mock('./slackFiles', () => ({
+jest.mock('../../src/service/slackFiles', () => ({
     downloadSlackFile: mockDownloadSlackFile
 }))
 
-const {syncSlackAttachments} = require('./slackAttachments')
+const {syncSlackAttachments} = require('../../src/service/slackAttachments')
 
 describe('syncSlackAttachments', () => {
     beforeEach(() => {

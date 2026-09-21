@@ -7,8 +7,9 @@
     "start": "node app.js",
     "start:dev": "set -o allexport; source .env; set +o allexport && node app.js",
     "watch": "nodemon app.js",
-    "test": "jest --runInBand --testPathIgnorePatterns=persistence.functional.test.js",
-    "test:unit": "jest --runInBand test/unit"
+    "test": "npm run test:unit",
+    "test:unit": "jest --runInBand test/unit",
+    "test:functional": "jest --runInBand test/functional"
   },
   "author": "IDAM",
   "license": "MIT",

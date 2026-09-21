@@ -1,4 +1,4 @@
-const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getContextElement, getSectionField} = require("./blockHelper");
+const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getContextElement, getSectionField} = require("../../src/util/blockHelper");
 
 
 describe('blockHelper', () => {

@@ -1,4 +1,4 @@
-const jira = require('./persistence');
+const jira = require('../../src/service/persistence');
 const config = require('config')
 
 const jiraProject = config.get('jira.project');

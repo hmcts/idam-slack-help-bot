@@ -14,7 +14,7 @@ const mockJiraClient = {
 
 jest.mock('jira-client', () => jest.fn(() => mockJiraClient))
 
-const jira = require('./persistence')
+const jira = require('../../src/service/persistence')
 
 describe('convertEmail', () => {
     beforeAll(() => {

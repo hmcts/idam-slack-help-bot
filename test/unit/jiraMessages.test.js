@@ -1,4 +1,4 @@
-const {createComment, mapFieldsToDescription} = require('./jiraMessages')
+const {createComment, mapFieldsToDescription} = require('../../src/service/jiraMessages')
 
 describe('Jira v3 messages', () => {
     it('creates an ADF issue description containing the Slack link and supplied fields', () => {

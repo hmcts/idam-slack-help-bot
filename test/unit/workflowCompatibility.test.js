@@ -1,16 +1,16 @@
-jest.mock('../service/serviceStatus', () => ({
+jest.mock('../../src/service/serviceStatus', () => ({
     getAllServiceStatus: jest.fn(() => ({}))
 }));
 
 const config = require('config');
 const {App, WorkflowStep} = require('@slack/bolt');
-const {createSupportRequestStep} = require('./supportRequestStep');
-const {reportBugWorkflowStep} = require('./bugReportStep');
-const {createNewServiceRequestWorkflowStep} = require('./newOidcServiceStep');
-const {createNewReportIdamBugWorkflowStep} = require('./newBugReportStep');
-const {createNewSupportRequestWorkflowStep} = require('./newSupportRequestStep');
-const {getServiceStatusWorkflowStep} = require('./getServiceStatusStep');
-const {createNewUserRoleRequestWorkflowStep} = require('./newRoleRequestStep');
+const {createSupportRequestStep} = require('../../src/workflow/supportRequestStep');
+const {reportBugWorkflowStep} = require('../../src/workflow/bugReportStep');
+const {createNewServiceRequestWorkflowStep} = require('../../src/workflow/newOidcServiceStep');
+const {createNewReportIdamBugWorkflowStep} = require('../../src/workflow/newBugReportStep');
+const {createNewSupportRequestWorkflowStep} = require('../../src/workflow/newSupportRequestStep');
+const {getServiceStatusWorkflowStep} = require('../../src/workflow/getServiceStatusStep');
+const {createNewUserRoleRequestWorkflowStep} = require('../../src/workflow/newRoleRequestStep');
 
 const workflowStepFactories = [
     createSupportRequestStep,

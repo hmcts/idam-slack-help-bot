@@ -6,6 +6,8 @@ const mockJiraClient = {
     doRequest: jest.fn(),
     getProject: jest.fn(),
     addNewIssue: jest.fn(),
+    addComment: jest.fn(),
+    addAttachmentOnIssue: jest.fn(),
     listTransitions: jest.fn(),
     transitionIssue: jest.fn()
 }
@@ -115,5 +117,60 @@ describe('createHelpRequest', () => {
             })
         }))
         expect(issue.fields).not.toHaveProperty('customfield_10008')
+    })
+})
+
+describe('addAttachmentToHelpRequest', () => {
+    it('uploads the supplied file stream to the Jira issue', async () => {
+        const attachmentStream = {path: 'screenshot.png'}
+        mockJiraClient.addAttachmentOnIssue.mockResolvedValue([{id: 'attachment-id'}])
+
+        await jira.addAttachmentToHelpRequest('SBOX-123', attachmentStream)
+
+        expect(mockJiraClient.addAttachmentOnIssue).toHaveBeenCalledWith('SBOX-123', attachmentStream)
+    })
+
+    it('propagates upload failures so the caller can add a Jira warning comment', async () => {
+        const attachmentStream = {path: 'screenshot.png'}
+        mockJiraClient.addAttachmentOnIssue.mockRejectedValue(new Error('Jira upload failed'))
+
+        await expect(jira.addAttachmentToHelpRequest('SBOX-123', attachmentStream))
+            .rejects.toThrow('Jira upload failed')
+    })
+})
+
+describe('addCommentToHelpRequest', () => {
+    const commentFields = {
+        slackLink: 'https://example.slack.com/message',
+        displayName: 'IDAM Support Bot',
+        message: 'Failed to download attachment from Slack.'
+    }
+
+    beforeEach(() => {
+        jest.spyOn(console, 'log').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+        console.log.mockRestore()
+    })
+
+    it('adds the attachment warning comment to Jira', async () => {
+        mockJiraClient.addComment.mockResolvedValue({id: 'comment-id'})
+
+        await jira.addCommentToHelpRequest('SBOX-123', commentFields)
+
+        expect(mockJiraClient.addComment).toHaveBeenCalledWith(
+            'SBOX-123',
+            expect.objectContaining({type: 'doc', version: 1})
+        )
+    })
+
+    it('soft-fails and logs when Jira rejects the warning comment', async () => {
+        const error = new Error('Jira comment failed')
+        mockJiraClient.addComment.mockRejectedValue(error)
+
+        await expect(jira.addCommentToHelpRequest('SBOX-123', commentFields)).resolves.toBeUndefined()
+
+        expect(console.log).toHaveBeenCalledWith('Error creating comment in jira', error)
     })
 })

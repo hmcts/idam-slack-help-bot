@@ -183,6 +183,10 @@ async function addCommentToHelpRequest(externalSystemId, fields) {
     }
 }
 
+async function addAttachmentToHelpRequest(externalSystemId, attachmentStream) {
+    await jira.addAttachmentOnIssue(externalSystemId, attachmentStream)
+}
+
 function constructJiraIssue(helpRequest, project, user, issueType) {
     const defaultFields = defaultJiraIssueFields(helpRequest.summary, project, user, issueType);
     switch(issueType) {
@@ -275,6 +279,7 @@ module.exports.assignHelpRequest = assignHelpRequest
 module.exports.createHelpRequest = createHelpRequest
 module.exports.updateHelpRequestDescription = updateHelpRequestDescription
 module.exports.addCommentToHelpRequest = addCommentToHelpRequest
+module.exports.addAttachmentToHelpRequest = addAttachmentToHelpRequest
 module.exports.convertEmail = convertEmail
 module.exports.extractJiraId = extractJiraId
 module.exports.extractJiraIdFromBlocks = extractJiraIdFromBlocks

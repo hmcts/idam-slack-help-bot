@@ -16,6 +16,7 @@ const {
     searchForUnassignedOpenIssues,
     transitionHelpRequest,
 } = require("./src/service/persistence");
+const {syncSlackAttachments} = require('./src/service/slackAttachments');
 
 const app = new App({
     token: config.get('secrets.cftptl-intsvc.idam-slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
@@ -438,7 +439,7 @@ app.event('message', async ({event, context, client, say}) => {
         if (event.channel === reportChannelId && event.thread_ts) {
             const slackLink = (await client.chat.getPermalink({
                 channel: event.channel,
-                'message_ts': event.thread_ts
+                'message_ts': event.ts
             })).permalink
 
             const user = (await client.users.profile.get({
@@ -475,6 +476,8 @@ app.event('message', async ({event, context, client, say}) => {
                     displayName,
                     message: newTargetText
                 })
+
+                await syncSlackAttachments(jiraId, event.files, context.botToken, slackLink)
             } else {
                 // either need to implement pagination or find a better way to get the first message in the thread
                 console.warn("Could not find jira ID, possibly thread is longer than 200 messages, TODO implement pagination");

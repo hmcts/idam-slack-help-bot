@@ -37,7 +37,7 @@ jobs:
       - name: npm install
         run: npm install
 
-      - name: Test
+      - name: Unit tests
         run: npm test
       # End of  setup
 
@@ -63,13 +63,13 @@ jobs:
           az acr login --name hmctsprod
 
       - name: "Build and Push PR image - hmctsprod"
-        if: startsWith(github.ref, 'refs/pull')
+        if: success() && startsWith(github.ref, 'refs/pull')
         run: |
           docker build . -t ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
           docker push ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:pr-${{github.event.number}}-${{ steps.get-short-sha.outputs.shortSha }}
 
       - name: "Build and push prod image - hmctsprod"
-        if: github.ref == 'refs/heads/master'
+        if: success() && github.ref == 'refs/heads/master'
         run: |
           docker build . -t ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}
           docker push ${{ env.NEW_AZURE_CONTAINER_REGISTRY_URL }}/idam/slack-help-bot:prod-${{ steps.get-short-sha.outputs.shortSha }}-${{ github.run_number }}

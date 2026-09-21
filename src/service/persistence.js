@@ -164,10 +164,8 @@ async function updateHelpRequestDescription(issueId, fields) {
     const jiraDescription = mapFieldsToDescription(fields);
     try {
         await jira.updateIssue(issueId, {
-            update: {
-                description: [{
-                    set: jiraDescription
-                }]
+            fields: {
+                description: jiraDescription
             }
         })
     } catch(err) {
@@ -188,7 +186,7 @@ async function addAttachmentToHelpRequest(externalSystemId, attachmentStream) {
 }
 
 function constructJiraIssue(helpRequest, project, user, issueType) {
-    const defaultFields = defaultJiraIssueFields(helpRequest.summary, project, user, issueType);
+    const defaultFields = defaultJiraIssueFields(helpRequest, project, user, issueType);
     switch(issueType) {
         case JiraType.SERVICE.id:
             return constructOidcServiceJiraIssue(helpRequest, defaultFields);
@@ -204,9 +202,9 @@ function constructJiraIssue(helpRequest, project, user, issueType) {
     }
 }
 
-function defaultJiraIssueFields(summary, project, accountId, issueType) {
+function defaultJiraIssueFields(helpRequest, project, accountId, issueType) {
     return {
-        summary: summary,
+        summary: helpRequest.summary,
         issuetype: {
             id: issueType
         },
@@ -214,7 +212,7 @@ function defaultJiraIssueFields(summary, project, accountId, issueType) {
             id: project.id
         },
         labels: ['created-from-slack'],
-        description: undefined,
+        description: mapFieldsToDescription(helpRequest),
         reporter: {
             accountId
         },

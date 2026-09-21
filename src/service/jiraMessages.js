@@ -45,9 +45,10 @@ function longField(title, value) {
 }
 
 function slackNotice(message, slackLink) {
-    const content = [textNode(`${message}, `, [{type: 'em'}])]
+    const content = [textNode(message, [{type: 'em'}])]
 
     if (slackLink) {
+        content[0].text += ', '
         content.push(textNode('view in Slack', [
             {type: 'em'},
             {

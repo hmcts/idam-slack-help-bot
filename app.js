@@ -17,6 +17,7 @@ const {
     transitionHelpRequest,
 } = require("./src/service/persistence");
 const {syncSlackAttachments} = require('./src/service/slackAttachments');
+const {bugReportFromView, supportRequestFromView} = require('./src/service/slackViewMapper');
 
 const app = new App({
     token: config.get('secrets.cftptl-intsvc.idam-slack-bot-token'), //disable this if enabling OAuth in socketModeReceiver
@@ -148,17 +149,7 @@ app.view('create_help_request', async ({ack, body, view, client}) => {
 
     // Message the user
     try {
-        const helpRequest = {
-            user,
-            summary: view.state.values.summary.title.value,
-            description: view.state.values.description.description.value,
-            analysis: view.state.values.analysis.analysis.value,
-            environment: view.state.values.environment.environment.selected_option?.text.text || "N/A",
-            service: view.state.values.service.service.selected_option?.text.text,
-            userAffected: view.state.values.user.user.value || "N/A",
-            date: view.state.values.date.date.value || "N/A",
-            time: view.state.values.time.time.value || "N/A",
-        }
+        const helpRequest = supportRequestFromView(view.state.values, user)
         await handleSupportRequest(client, user, helpRequest)
     } catch (error) {
         console.error(error);
@@ -192,20 +183,7 @@ app.view('create_bug_request', async ({ack, body, view, client}) => {
 
     // Message the user
     try {
-        const helpRequest = {
-            user,
-            summary: view.state.values.summary.title.value,
-            description: view.state.values.description.description.value,
-            analysis: view.state.values.analysis.analysis.value,
-            environment: view.state.values.environment.environment.selected_option?.text.text || "N/A",
-            service: view.state.values.service.service.selected_option?.text.text,
-            impact: view.state.values.impact.impact.value,
-            roles: view.state.values.roles.roles.value,
-            steps: view.state.values.steps.steps.value,
-            expected: view.state.values.expected.expected.value,
-            actual: view.state.values.actual.actual.value,
-            userAffected: view.state.values.user.user.value || "N/A"
-        }
+        const helpRequest = bugReportFromView(view.state.values, user)
         await handleBugReport(client, user, helpRequest)
     } catch (error) {
         console.error(error);

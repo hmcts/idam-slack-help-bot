@@ -7,8 +7,12 @@ function convertIso8601ToEpochSeconds(isoTime) {
 }
 
 function extractSlackLinkFromText(text) {
-    if (text === undefined) {
+    if (text === undefined || text === null) {
         return undefined
+    }
+
+    if (typeof text === 'object') {
+        return extractSlackLinkFromAdf(text)
     }
 
     const slackLinkRegex = /view in Slack\|(https:\/\/.+slack\.com.+)]/
@@ -19,8 +23,38 @@ function extractSlackLinkFromText(text) {
     return regexResult[1]
 }
 
+function extractSlackLinkFromAdf(node) {
+    if (Array.isArray(node)) {
+        for (const child of node) {
+            const link = extractSlackLinkFromAdf(child)
+            if (link) return link
+        }
+        return undefined
+    }
+
+    if (!node || typeof node !== 'object') {
+        return undefined
+    }
+
+    const linkMark = node.marks?.find(mark => mark.type === 'link')
+    if (linkMark?.attrs?.href && isSlackLink(linkMark.attrs.href)) {
+        return linkMark.attrs.href
+    }
+
+    return extractSlackLinkFromAdf(node.content)
+}
+
+function isSlackLink(value) {
+    try {
+        const url = new URL(value)
+        return url.protocol === 'https:' && (url.hostname === 'slack.com' || url.hostname.endsWith('.slack.com'))
+    } catch (err) {
+        return false
+    }
+}
+
 function convertJiraKeyToUrl(jiraId) {
-    return `https://tools.hmcts.net/jira/browse/${jiraId}`;
+    return `https://hmcts.atlassian.net/browse/${jiraId}`;
 }
 
 const title = (summary) => {
@@ -100,4 +134,3 @@ module.exports = {
     textField,
     slackRequestText
 }
-

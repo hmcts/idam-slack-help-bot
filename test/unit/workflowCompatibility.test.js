@@ -55,6 +55,7 @@ describe('Bolt custom workflow functions', () => {
         expect(functionManifest.settings.event_subscriptions.bot_events).toContain('function_executed');
         expect(functionManifest.settings.event_subscriptions.bot_events).not.toContain('workflow_step_execute');
         expect(functionManifest.features.workflow_steps).toBeUndefined();
+        expect(functionManifest.features.app_home.home_tab_enabled).toBe(true);
         expect(functionManifest.oauth_config.scopes.bot).not.toContain('workflow.steps:execute');
         Object.values(functionManifest.functions).forEach(({output_parameters: outputs}) => {
             expect(outputs).toEqual({});

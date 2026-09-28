@@ -7,7 +7,7 @@ const {
     openBugRequestBlocks,
     unassignedOpenIssue,
 } = require('./src/messages');
-const {App, LogLevel, SocketModeReceiver} = require('@slack/bolt');
+const {App} = require('@slack/bolt');
 const {
     addCommentToHelpRequest,
     assignHelpRequest,
@@ -28,16 +28,10 @@ const app = new App({
 const http = require('http');
 const {button, slackRequestText} = require("./src/util/helpers");
 const {JiraType} = require("./src/service/jiraTicketTypes");
-const {createNewUserRoleRequestWorkflowStep} = require("./src/workflow/newRoleRequestStep");
-const {createNewServiceRequestWorkflowStep} = require("./src/workflow/newOidcServiceStep");
-const {createNewSupportRequestWorkflowStep} = require("./src/workflow/newSupportRequestStep");
-const {createNewReportIdamBugWorkflowStep} = require("./src/workflow/newBugReportStep");
-const {reportBugWorkflowStep} = require("./src/workflow/bugReportStep");  
 const {handleSupportRequest} = require("./src/service/helpRequestManager");
 const {handleBugReport} = require("./src/service/helpRequestManager");
-const {createSupportRequestStep} = require("./src/workflow/supportRequestStep");
 const {getActionsElement, updateActionsElement, addNewActionsElement, removeActionsElement, getSectionField} = require("./src/util/blockHelper");
-const {getServiceStatusWorkflowStep} = require("./src/workflow/getServiceStatusStep");
+const {registerWorkflowFunctions} = require("./src/workflow");
 
 const reportChannelId = config.get('slack.report_channel_id');
 const port = process.env.PORT || 3000
@@ -71,13 +65,7 @@ server.listen(port, () => {
     console.log('⚡️ Bolt app started');
 })();
 
-app.step(createSupportRequestStep());
-app.step(reportBugWorkflowStep());
-app.step(createNewServiceRequestWorkflowStep());
-app.step(createNewReportIdamBugWorkflowStep());
-app.step(createNewSupportRequestWorkflowStep());
-app.step(getServiceStatusWorkflowStep());
-app.step(createNewUserRoleRequestWorkflowStep());
+registerWorkflowFunctions(app);
 
 
 async function reopenAppHome(client, userId) {

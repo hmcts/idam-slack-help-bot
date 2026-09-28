@@ -1,0 +1,145 @@
+{
+  "display_information": {
+    "name": "CFT IDAM Support",
+    "description": "CFT IDAM Support",
+    "background_color": "#101114"
+  },
+  "features": {
+    "app_home": {
+      "home_tab_enabled": true,
+      "messages_tab_enabled": false,
+      "messages_tab_read_only_enabled": false
+    },
+    "bot_user": {
+      "display_name": "CFT IDAM Support",
+      "always_online": true
+    },
+    "shortcuts": [
+      {
+        "name": "Help IDAM SupportRequest",
+        "type": "global",
+        "callback_id": "launch_shortcut",
+        "description": "This request will also create a JIRA incident"
+      },
+      {
+        "name": "Help Report IDAM bug",
+        "type": "global",
+        "callback_id": "idam_bug_shortcut",
+        "description": "This request will also create a JIRA incident"
+      }
+    ]
+  },
+  "functions": {
+    "support_request_step": {
+      "title": "Create IDAM support request",
+      "description": "Creates an IDAM support request in Jira",
+      "input_parameters": {
+        "summary": {"type": "string", "title": "Issue summary", "description": "A short summary of the issue", "is_required": true, "name": "summary"},
+        "description": {"type": "string", "title": "Issue description", "description": "A detailed description of the issue", "is_required": true, "name": "description"},
+        "analysis": {"type": "string", "title": "Analysis", "description": "Analysis completed so far", "is_required": true, "name": "analysis"},
+        "environment": {"type": "string", "title": "Environment", "description": "The affected environment", "is_required": true, "name": "environment"},
+        "service": {"type": "string", "title": "Service affected", "description": "The affected service", "is_required": true, "name": "service"},
+        "user_affected": {"type": "string", "title": "User affected", "description": "The affected user", "is_required": true, "name": "user_affected"},
+        "date": {"type": "string", "title": "Date", "description": "The date the issue occurred", "is_required": true, "name": "date"},
+        "time": {"type": "string", "title": "Time", "description": "The time the issue occurred", "is_required": true, "name": "time"},
+        "user": {"type": "slack#/types/user_id", "title": "Ticket raiser", "description": "The user raising the ticket", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    },
+    "bug_report_step": {
+      "title": "Report IDAM bug",
+      "description": "Creates an IDAM bug report in Jira",
+      "input_parameters": {
+        "summary": {"type": "string", "title": "Issue summary", "description": "A short summary of the bug", "is_required": true, "name": "summary"},
+        "description": {"type": "string", "title": "Issue description", "description": "A detailed description of the bug", "is_required": true, "name": "description"},
+        "analysis": {"type": "string", "title": "Analysis", "description": "Analysis completed so far", "is_required": true, "name": "analysis"},
+        "environment": {"type": "string", "title": "Environment", "description": "The affected environment", "is_required": true, "name": "environment"},
+        "service": {"type": "string", "title": "Service affected", "description": "The affected service", "is_required": true, "name": "service"},
+        "impact": {"type": "string", "title": "Impact", "description": "The impact to users or services", "is_required": true, "name": "impact"},
+        "roles": {"type": "string", "title": "Affected roles", "description": "The roles affected by the bug", "is_required": true, "name": "roles"},
+        "steps": {"type": "string", "title": "Steps to reproduce", "description": "The steps needed to reproduce the bug", "is_required": true, "name": "steps"},
+        "expected": {"type": "string", "title": "Expected behaviour", "description": "What was expected to happen", "is_required": true, "name": "expected"},
+        "actual": {"type": "string", "title": "Actual behaviour", "description": "What actually happened", "is_required": true, "name": "actual"},
+        "user": {"type": "slack#/types/user_id", "title": "Ticket raiser", "description": "The user raising the ticket", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    },
+    "new_service_step": {
+      "title": "New IDAM OpenID Connect service",
+      "description": "Shows the requester how to create an OpenID Connect service request",
+      "input_parameters": {
+        "user": {"type": "slack#/types/user_id", "title": "Ticket raiser", "description": "The user making the request", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    },
+    "new_report_idam_bug_step": {
+      "title": "New Report IDAM Bug Announcement",
+      "description": "Shows the requester how to report an IDAM bug",
+      "input_parameters": {
+        "user": {"type": "slack#/types/user_id", "title": "Ticket raiser", "description": "The user making the request", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    },
+    "new_support_request_step": {
+      "title": "New IDAM Support Request Announcement",
+      "description": "Shows the requester how to raise an IDAM support request",
+      "input_parameters": {
+        "user": {"type": "slack#/types/user_id", "title": "Ticket raiser", "description": "The user making the request", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    },
+    "get_service_status_step": {
+      "title": "Get service status",
+      "description": "Shows the current IDAM service status to a user",
+      "input_parameters": {
+        "user": {"type": "slack#/types/user_id", "title": "Recipient", "description": "The user who will receive the service status", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    },
+    "new_user_role_service_step": {
+      "title": "New user role",
+      "description": "Shows the requester how to create an IDAM role request",
+      "input_parameters": {
+        "user": {"type": "slack#/types/user_id", "title": "Ticket raiser", "description": "The user making the request", "is_required": true, "name": "user"}
+      },
+      "output_parameters": {}
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "app_mentions:read",
+        "channels:history",
+        "commands",
+        "groups:history",
+        "im:history",
+        "mpim:history",
+        "users.profile:read",
+        "chat:write"
+      ]
+    },
+    "pkce_enabled": false
+  },
+  "settings": {
+    "event_subscriptions": {
+      "bot_events": [
+        "app_home_opened",
+        "app_mention",
+        "message.channels",
+        "message.groups",
+        "message.im",
+        "message.mpim",
+        "function_executed"
+      ]
+    },
+    "interactivity": {
+      "is_enabled": true
+    },
+    "org_deploy_enabled": true,
+    "socket_mode_enabled": true,
+    "token_rotation_enabled": false,
+    "app_level_token_rotation_enabled": false,
+    "is_mcp_enabled": false,
+    "function_runtime": "remote"
+  }
+}

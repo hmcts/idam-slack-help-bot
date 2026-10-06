@@ -46,7 +46,7 @@ Listens for new posts in a designated Slack channel and raises a corresponding i
 
 Running the application requires the following tools to be installed in your environment:
 
-  * [Node.js](https://nodejs.org/) v14.0.0 or later
+  * [Node.js](https://nodejs.org/) v20.0.0 or later
   * [npm](https://www.npmjs.com/)
   * [Docker](https://www.docker.com)
 
@@ -111,3 +111,9 @@ This will start the frontend container exposing the application's port
 
 In order to test if the application is up, you can visit https://localhost:3000/health in your browser.
 You should get a very basic health page (no styles, etc.).
+
+## Slack workflow functions
+
+Bolt 5 uses custom workflow functions in place of the legacy `WorkflowStep` API. [slack-app-manifest.json](slack-app-manifest.json) is the complete version 1 manifest for the existing CFT IDAM Support app, with its legacy workflow steps replaced by remote custom functions. Paste it into the app's Slack manifest editor, review Slack's validation result, and save it. The app must then be installed at the organization level for its custom steps to appear in Workflow Builder.
+
+Existing Workflow Builder workflows that use the legacy steps must be updated to use the corresponding custom steps. The callback IDs have been kept unchanged, but Slack does not migrate legacy workflow steps to custom functions automatically.

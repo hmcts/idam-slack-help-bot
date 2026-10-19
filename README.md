@@ -32,7 +32,7 @@ Listens for new posts in a designated Slack channel and raises a corresponding i
 
 <img src="images/step6.png" width=50% height=50% />
 
-7. Head to **Oauth and Permissions** and install the app to your workspace. Allow the app the default permissions. Copy the generated **Bot User OAuth Access Token** as this will be required for the idam-slack-help-bot configuration. 
+7. Head to **OAuth and Permissions**, add the `files:read` bot token scope, and install the app to your workspace. Existing apps must be reinstalled after adding the scope. Copy the generated **Bot User OAuth Access Token** as this will be required for the idam-slack-help-bot configuration.
 
 <img src="images/step7.png" width=50% height=50% />
 

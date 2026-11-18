@@ -38,8 +38,8 @@ const jira = new JiraApi({
     protocol: 'https',
     host: 'api.atlassian.com',
     base: `/ex/jira/${jiraCloudId}`,
-    username: config.get('secrets.cftptl-intsvc.jira-username'),
-    password: config.get('secrets.cftptl-intsvc.jira-api-token'),
+    username: config.get('secrets.cftptl-intsvc.jira-username-idam'),
+    password: config.get('secrets.cftptl-intsvc.jira-api-token-idam'),
     apiVersion: '3',
     strictSSL: true
 });
